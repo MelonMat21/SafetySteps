@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SAFETY_STEPS.ReportDetailSheet"
+             BackgroundColor="White"
+             NavigationPage.HasNavigationBar="False">
+
+    <!--
+        Outer Grid: single cell that always fills the full screen.
+        RootGrid (rows 0-3) and PhotoOverlay are siblings here so the
+        overlay is never clipped by collapsed inner rows.
+    -->
+    <Grid>
+
+        <!-- ══ Inner layout ══════════════════════════════════════ -->
+        <!--
+            Row 0 – Header bar (close + title + status badge)     ~52 dp
+            Row 1 – Info panel (scrollable)                       Auto (max ~260 dp)
+            Row 2 – Google Maps WebView                           * (fills remaining space)
+            Row 3 – Action buttons (Respond / Delete)             ~66 dp
+        -->
+        <Grid x:Name="RootGrid" RowDefinitions="Auto,Auto,*,Auto">
+
+            <!-- ══ Row 0 : Header ══════════════════════════════════ -->
+            <Grid Grid.Row="0"
+                  BackgroundColor="DarkRed"
+                  Padding="14,12,14,12"
+                  ColumnDefinitions="Auto,*,Auto">
+
+                <ImageButton Grid.Column="0"
+                             Source="back_white.png"
+                             HeightRequest="22"
+                             WidthRequest="22"
+                             VerticalOptions="Center"
+                             Clicked="Close_Clicked"
+                             BackgroundColor="Transparent"/>
+
+                <Label Grid.Column="1"
+                       Text="Report Details"
+                       TextColor="White"
+                       FontSize="17"
+                       FontFamily="PoppinsRegular"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"/>
+
+                <Frame Grid.Column="2"
+                       x:Name="StatusBadge"
+                       CornerRadius="8"
+                       Padding="8,3"
+                       HasShadow="False"
+                       VerticalOptions="Center">
+                    <Label x:Name="StatusLabel"
+                           TextColor="White"
+                           FontSize="11"
+                           FontFamily="PoppinsRegular"/>
+                </Frame>
+            </Grid>
+
+            <!-- ══ Row 1 : Info Panel (scrollable) ═════════════════ -->
+            <ScrollView Grid.Row="1">
+                <VerticalStackLayout Padding="16,12,16,10" Spacing="10">
+
+                    <!-- Reporter -->
+                    <Grid ColumnDefinitions="22,*" ColumnSpacing="8">
+                        <Image Grid.Column="0" Source="profile3.png"
+                               HeightRequest="18" WidthRequest="18" VerticalOptions="Start"/>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Reporter" FontSize="11" TextColor="Gray"/>
+                            <Label x:Name="NameLabel" FontSize="13"
+                                   FontAttributes="Bold" TextColor="Black"/>
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <BoxView HeightRequest="1" BackgroundColor="#EEEEEE"/>
+
+                    <!-- Student ID Number -->
+                    <Grid ColumnDefinitions="22,*" ColumnSpacing="8">
+                        <Label Grid.Column="0" Text="🪪" FontSize="15" VerticalOptions="Start"/>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Student ID Number" FontSize="11" TextColor="Gray" FontFamily="PoppinsRegular"/>
+                            <Label x:Name="StudentNumberLabel" FontSize="13"
+                                   FontAttributes="Bold" TextColor="Black"/>
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <BoxView HeightRequest="1" BackgroundColor="#EEEEEE"/>
+
+                    <!-- Incident Type -->
+                    <Grid ColumnDefinitions="22,*" ColumnSpacing="8">
+                        <Label Grid.Column="0" Text="⚠️" FontSize="15" VerticalOptions="Start"/>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Incident Type" FontSize="11" TextColor="Gray"/>
+                            <Label x:Name="IncidentTypeLabel" FontSize="13"
+                                   FontAttributes="Bold" TextColor="#C62828"
+                                   LineBreakMode="WordWrap"/>
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <BoxView HeightRequest="1" BackgroundColor="#EEEEEE"/>
+
+                    <!-- Location -->
+                    <Grid ColumnDefinitions="22,*" ColumnSpacing="8">
+                        <Image Grid.Column="0" Source="location2.png"
+                               HeightRequest="18" WidthRequest="18" VerticalOptions="Start"/>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Location" FontSize="11" TextColor="Gray"/>
+                            <Label x:Name="LocationLabel" FontSize="13"
+                                   FontAttributes="Bold" TextColor="Black"
+                                   LineBreakMode="WordWrap"/>
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <BoxView HeightRequest="1" BackgroundColor="#EEEEEE"/>
+
+                    <!-- Contact + Timestamp in two columns -->
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <Grid Grid.Column="0" ColumnDefinitions="22,*" ColumnSpacing="6">
+                            <Image Grid.Column="0" Source="call2.png"
+                                   HeightRequest="18" WidthRequest="18" VerticalOptions="Start"/>
+                            <VerticalStackLayout Grid.Column="1">
+                                <Label Text="Contact" FontSize="11" TextColor="Gray"/>
+                                <Label x:Name="ContactLabel" FontSize="12"
+                                       FontAttributes="Bold" TextColor="Black"/>
+                            </VerticalStackLayout>
+                        </Grid>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Reported at" FontSize="11" TextColor="Gray"/>
+                            <Label x:Name="TimestampLabel" FontSize="11"
+                                   TextColor="Black" LineBreakMode="WordWrap"/>
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <BoxView HeightRequest="1" BackgroundColor="#EEEEEE"/>
+
+                    <!-- GPS address -->
+                    <Grid ColumnDefinitions="22,*" ColumnSpacing="8">
+                        <Label Grid.Column="0" Text="📍" FontSize="15" VerticalOptions="Start"/>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="GPS Address" FontSize="11" TextColor="Gray"/>
+                            <Label x:Name="GpsLabel" FontSize="11"
+                                   TextColor="#1565C0" LineBreakMode="WordWrap"/>
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <BoxView HeightRequest="1" BackgroundColor="#EEEEEE"/>
+
+                    <!-- Incident Photo -->
+                    <Grid ColumnDefinitions="22,*" ColumnSpacing="8">
+                        <Label Grid.Column="0" Text="📷" FontSize="15" VerticalOptions="Start"/>
+                        <VerticalStackLayout Grid.Column="1" Spacing="6">
+                            <Label Text="Incident Photo" FontSize="11" TextColor="Gray"/>
+                            <Label x:Name="NoPhotoLabel"
+                                   Text="No photo attached"
+                                   FontSize="12"
+                                   TextColor="#BDBDBD"
+                                   IsVisible="True"/>
+                            <Border x:Name="PhotoBorder"
+                                    IsVisible="False"
+                                    StrokeShape="RoundRectangle 8"
+                                    StrokeThickness="1"
+                                    Stroke="#E0E0E0">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnPhotoTapped"/>
+                                </Border.GestureRecognizers>
+                                <Image x:Name="IncidentPhotoImage"
+                                       Aspect="AspectFit"
+                                       HeightRequest="200"/>
+                            </Border>
+                            <Label x:Name="PhotoTapHint"
+                                   Text="🔍 Tap photo to expand"
+                                   FontSize="10"
+                                   TextColor="#9E9E9E"
+                                   HorizontalOptions="Center"
+                                   IsVisible="False"/>
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <!-- Live indicator -->
+                    <HorizontalStackLayout x:Name="LiveIndicator" IsVisible="False" Spacing="6">
+                        <ActivityIndicator IsRunning="True" Color="DarkRed"
+                                           HeightRequest="14" WidthRequest="14"
+                                           VerticalOptions="Center"/>
+                        <Label Text="Live tracking active — map updates every 5 s"
+                               FontSize="11" TextColor="DarkRed"
+                               VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+
+                </VerticalStackLayout>
+            </ScrollView>
+
+            <!-- ══ Row 2 : Google Maps WebView ════════════════════ -->
+            <Grid x:Name="MapContainer" Grid.Row="2">
+                <WebView x:Name="MapWebView"/>
+            </Grid>
+
+            <!-- ══ Row 3 : Action Buttons ══════════════════════════ -->
+            <Grid Grid.Row="3"
+                  Padding="16,10,16,14"
+                  ColumnDefinitions="*,*"
+                  ColumnSpacing="10"
+                  BackgroundColor="White">
+
+                <Button Grid.Column="0"
+                        x:Name="RespondButton"
+                        Text="✅  Mark Responded"
+                        BackgroundColor="#388E3C"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        FontSize="13"
+                        CornerRadius="10"
+                        HeightRequest="46"
+                        Clicked="Respond_Clicked"/>
+
+                <Button Grid.Column="1"
+                        Text="🗑  Delete Report"
+                        BackgroundColor="#D90000"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        FontSize="13"
+                        CornerRadius="10"
+                        HeightRequest="46"
+                        Clicked="Delete_Clicked"/>
+
+            </Grid>
+
+        </Grid>
+
+        <!-- ══ Full-screen Photo Overlay ═══════════════════════════
+             Sibling of RootGrid in the outer single-cell Grid.
+             Always covers 100 % of the screen, regardless of whether
+             the map row is collapsed or not.
+        ══════════════════════════════════════════════════════════ -->
+        <Grid x:Name="PhotoOverlay"
+              BackgroundColor="#E6000000"
+              IsVisible="False"
+              ZIndex="10">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnOverlayTapped"/>
+            </Grid.GestureRecognizers>
+
+            <Image x:Name="ExpandedPhotoImage"
+                   Aspect="AspectFit"
+                   HorizontalOptions="Fill"
+                   VerticalOptions="Center"
+                   Margin="0,60,0,60">
+                <Image.GestureRecognizers>
+                    <PinchGestureRecognizer PinchUpdated="OnPhotoPinchUpdated"/>
+                    <PanGestureRecognizer PanUpdated="OnPhotoPanUpdated"/>
+                    <TapGestureRecognizer NumberOfTapsRequired="2" Tapped="OnPhotoDoubleTapped"/>
+                </Image.GestureRecognizers>
+            </Image>
+
+            <!-- Close button -->
+            <Border BackgroundColor="#CC000000"
+                    StrokeShape="RoundRectangle 20"
+                    StrokeThickness="0"
+                    Padding="10,6"
+                    HorizontalOptions="End"
+                    VerticalOptions="Start"
+                    Margin="0,48,16,0">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnOverlayTapped"/>
+                </Border.GestureRecognizers>
+                <Label Text="✕  Close"
+                       TextColor="White"
+                       FontSize="13"
+                       FontAttributes="Bold"/>
+            </Border>
+
+            <!-- Hint label -->
+            <Label Text="Double-tap to reset zoom · Tap to close"
+                   TextColor="#AAFFFFFF"
+                   FontSize="11"
+                   HorizontalOptions="Center"
+                   VerticalOptions="End"
+                   Margin="0,0,0,24"/>
+        </Grid>
+
+    </Grid>
+</ContentPage>

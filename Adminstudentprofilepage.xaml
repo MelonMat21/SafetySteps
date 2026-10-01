@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SAFETY_STEPS.AdminStudentProfilePage"
+             BackgroundColor="White"
+             Title="Student Profile">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="0">
+
+            <!-- Header -->
+            <Border Background="#ab0404" StrokeThickness="0">
+                <VerticalStackLayout HeightRequest="60" Background="#ab0404"
+                                     VerticalOptions="Start" HorizontalOptions="Start"
+                                     Spacing="8" Padding="10">
+                    <Label Text="Student Profile"
+                           TextColor="White" FontSize="18"
+                           FontFamily="PoppinsBold"
+                           Padding="10,8,0,0"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Loading indicator -->
+            <ActivityIndicator x:Name="LoadingIndicator"
+                               IsRunning="True" IsVisible="True"
+                               Color="#ab0404" HeightRequest="60"
+                               Margin="0,30"/>
+
+            <!-- Profile card (hidden until data loads) -->
+            <VerticalStackLayout x:Name="ProfileContent"
+                                 IsVisible="False"
+                                 Padding="20" Spacing="16">
+
+                <!-- Avatar circle -->
+                <Border StrokeShape="Ellipse"
+                        StrokeThickness="3" Stroke="#ab0404"
+                        HeightRequest="110" WidthRequest="110"
+                        HorizontalOptions="Center"
+                        BackgroundColor="#FFEBEE">
+                    <Label Text="🧑‍🎓" FontSize="56"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"/>
+                </Border>
+
+                <!-- Display name -->
+                <Label x:Name="DisplayNameLabel"
+                       Text="—"
+                       FontSize="22" FontFamily="PoppinsBold"
+                       TextColor="Black"
+                       HorizontalOptions="Center"/>
+
+                <!-- Student number badge -->
+                <Border StrokeShape="RoundRectangle 20"
+                        StrokeThickness="0"
+                        BackgroundColor="#FFEBEE"
+                        Padding="14,6"
+                        HorizontalOptions="Center"
+                        IsVisible="{Binding Source={x:Reference StudentNumberBadge}, Path=IsVisible}">
+                    <Label x:Name="StudentNumberBadge"
+                           Text="—"
+                           TextColor="#ab0404"
+                           FontFamily="PoppinsBold"
+                           FontSize="14"
+                           HorizontalOptions="Center"/>
+                </Border>
+
+                <!-- Role chip -->
+                <Border StrokeShape="RoundRectangle 20"
+                        StrokeThickness="1" Stroke="#E0E0E0"
+                        Padding="14,6" HorizontalOptions="Center"
+                        BackgroundColor="#F5F5F5">
+                    <Label Text="🎓  Student"
+                           TextColor="Gray" FontSize="13"
+                           FontFamily="PoppinsRegular"/>
+                </Border>
+
+                <!-- Details card -->
+                <Border BackgroundColor="White"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 20"
+                        Padding="24" Margin="0,8,0,0">
+                    <Border.Shadow>
+                        <Shadow Brush="#30000000" Offset="0,4" Radius="10" Opacity="2"/>
+                    </Border.Shadow>
+
+                    <VerticalStackLayout Spacing="14">
+
+                        <Label Text="Account Details"
+                               FontSize="16" FontFamily="PoppinsBold"
+                               TextColor="Black" HorizontalOptions="Center"/>
+
+                        <!-- UID -->
+                        <HorizontalStackLayout Spacing="12">
+                            <Image Source="id.png" HeightRequest="20" WidthRequest="20"/>
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="User ID" FontSize="12" TextColor="Gray" FontFamily="PoppinsRegular"/>
+                                <Label x:Name="UserIdLabel" Text="—" FontSize="13" FontFamily="PoppinsRegular" TextColor="Black"/>
+                            </VerticalStackLayout>
+                        </HorizontalStackLayout>
+
+                        <BoxView HeightRequest="1" Color="#EEEEEE"/>
+
+                        <!-- Student Number -->
+                        <HorizontalStackLayout Spacing="12">
+                            <Image Source="number.png" HeightRequest="20" WidthRequest="20"/>
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="Student Number" FontSize="12" TextColor="Gray" FontFamily="PoppinsRegular"/>
+                                <Label x:Name="StudentNumberLabel" Text="—" FontSize="13" FontFamily="PoppinsRegular" TextColor="Black"/>
+                            </VerticalStackLayout>
+                        </HorizontalStackLayout>
+
+                        <BoxView HeightRequest="1" Color="#EEEEEE"/>
+
+                        <!-- Email -->
+                        <HorizontalStackLayout Spacing="12">
+                            <Label Text="✉️" FontSize="18" VerticalOptions="Center"/>
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="Email" FontSize="12" TextColor="Gray" FontFamily="PoppinsRegular"/>
+                                <Label x:Name="EmailLabel" Text="—" FontSize="13" FontFamily="PoppinsRegular" TextColor="Black"/>
+                            </VerticalStackLayout>
+                        </HorizontalStackLayout>
+
+                        <BoxView HeightRequest="1" Color="#EEEEEE"/>
+
+                        <!-- FCM Token (truncated — useful for debugging) -->
+                        <HorizontalStackLayout Spacing="12">
+                            <Label Text="📱" FontSize="18" VerticalOptions="Center"/>
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="Device Token" FontSize="12" TextColor="Gray" FontFamily="PoppinsRegular"/>
+                                <Label x:Name="FcmTokenLabel" Text="—" FontSize="12"
+                                       FontFamily="PoppinsRegular" TextColor="#777"
+                                       LineBreakMode="TailTruncation"/>
+                            </VerticalStackLayout>
+                        </HorizontalStackLayout>
+
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Not-found message -->
+                <Border x:Name="NotFoundBanner"
+                        IsVisible="False"
+                        StrokeShape="RoundRectangle 10"
+                        Padding="16" BackgroundColor="#FFF3E0"
+                        Stroke="#FFCCBC">
+                    <Label Text="⚠️  Full profile not found in database.\nOnly the caller ID is available."
+                           TextColor="#E65100" FontSize="13"
+                           HorizontalTextAlignment="Center"/>
+                </Border>
+
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

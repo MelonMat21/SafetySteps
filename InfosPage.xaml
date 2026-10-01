@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SAFETY_STEPS.InfosPage"
+             BackgroundColor="White"
+             Title="InfosPage">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="0">
+
+            <!-- ══ Header bar -->
+            <Grid
+                HeightRequest="60"
+                BackgroundColor="#ab0404"
+                Padding="10,0">
+                <Label
+                    Text="Safety Information"
+                    TextColor="White"
+                    FontSize="18"
+                    FontFamily="PoppinsBold"
+                    VerticalOptions="Center"
+                    Margin="10,0,0,0"/>
+            </Grid>
+
+            <!-- ══ Cards -->
+            <VerticalStackLayout Padding="16,14,16,24" Spacing="14">
+
+                <!-- ─────────────────────────────────────────────────
+                     SECTION: Natural Disasters
+                ───────────────────────────────────────────────── -->
+                <Label
+                    Text="Natural Disasters"
+                    TextColor="#1a1a1a"
+                    FontFamily="PoppinsBold"
+                    FontSize="16"
+                    Margin="2,4,0,2"/>
+
+                <!-- Earthquake -->
+                <Border StrokeShape="RoundRectangle 14" StrokeThickness="0" BackgroundColor="White">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Opacity="0.10" Radius="12" Offset="0,4"/>
+                    </Border.Shadow>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnEarthquakeClicked"/>
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="0">
+                        <Image Source="earthquake_button.png" HeightRequest="190" Aspect="AspectFill"/>
+                        <VerticalStackLayout Padding="14,10,14,14" Spacing="2">
+                            <Label Text="EARTHQUAKE GUIDE" FontFamily="PoppinsBold" FontSize="14" TextColor="#1a1a1a"/>
+                            <Label Text="Tap to view" FontFamily="PoppinsRegular" FontSize="13" TextColor="#ab0404"/>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Typhoon -->
+                <Border StrokeShape="RoundRectangle 14" StrokeThickness="0" BackgroundColor="White">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Opacity="0.10" Radius="12" Offset="0,4"/>
+                    </Border.Shadow>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnTyphoonClicked"/>
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="0">
+                        <Image Source="typhoon_button.png" HeightRequest="190" Aspect="AspectFill"/>
+                        <VerticalStackLayout Padding="14,10,14,14" Spacing="2">
+                            <Label Text="TYPHOON GUIDE" FontFamily="PoppinsBold" FontSize="14" TextColor="#1a1a1a"/>
+                            <Label Text="Tap to view" FontFamily="PoppinsRegular" FontSize="13" TextColor="#ab0404"/>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Flood -->
+                <Border StrokeShape="RoundRectangle 14" StrokeThickness="0" BackgroundColor="White">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Opacity="0.10" Radius="12" Offset="0,4"/>
+                    </Border.Shadow>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnFloodClicked"/>
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="0">
+                        <Image Source="flood_button.png" HeightRequest="190" Aspect="AspectFill"/>
+                        <VerticalStackLayout Padding="14,10,14,14" Spacing="2">
+                            <Label Text="FLOOD GUIDE" FontFamily="PoppinsBold" FontSize="14" TextColor="#1a1a1a"/>
+                            <Label Text="Tap to view" FontFamily="PoppinsRegular" FontSize="13" TextColor="#ab0404"/>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Volcanic Eruption -->
+                <Border StrokeShape="RoundRectangle 14" StrokeThickness="0" BackgroundColor="White">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Opacity="0.10" Radius="12" Offset="0,4"/>
+                    </Border.Shadow>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnVolcanicEruptionClicked"/>
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="0">
+                        <Image Source="volcanic_eruption_button.png" HeightRequest="190" Aspect="AspectFill"/>
+                        <VerticalStackLayout Padding="14,10,14,14" Spacing="2">
+                            <Label Text="VOLCANIC ERUPTION GUIDE" FontFamily="PoppinsBold" FontSize="14" TextColor="#1a1a1a"/>
+                            <Label Text="Tap to view" FontFamily="PoppinsRegular" FontSize="13" TextColor="#ab0404"/>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Landslide -->
+                <Border StrokeShape="RoundRectangle 14" StrokeThickness="0" BackgroundColor="White">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Opacity="0.10" Radius="12" Offset="0,4"/>
+                    </Border.Shadow>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnLandslideClicked"/>
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="0">
+                        <Image Source="landslide_button.png" HeightRequest="190" Aspect="AspectFill"/>
+                        <VerticalStackLayout Padding="14,10,14,14" Spacing="2">
+                            <Label Text="LANDSLIDE GUIDE" FontFamily="PoppinsBold" FontSize="14" TextColor="#1a1a1a"/>
+                            <Label Text="Tap to view" FontFamily="PoppinsRegular" FontSize="13" TextColor="#ab0404"/>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Tsunami -->
+                <Border StrokeShape="RoundRectangle 14" StrokeThickness="0" BackgroundColor="White">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Opacity="0.10" Radius="12" Offset="0,4"/>
+                    </Border.Shadow>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnTsunamiClicked"/>
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="0">
+                        <Image Source="tsunami_button.png" HeightRequest="190" Aspect="AspectFill"/>
+                        <VerticalStackLayout Padding="14,10,14,14" Spacing="2">
+                            <Label Text="TSUNAMI GUIDE" FontFamily="PoppinsBold" FontSize="14" TextColor="#1a1a1a"/>
+                            <Label Text="Tap to view" FontFamily="PoppinsRegular" FontSize="13" TextColor="#ab0404"/>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Extreme Heat -->
+                <Border StrokeShape="RoundRectangle 14" StrokeThickness="0" BackgroundColor="White">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Opacity="0.10" Radius="12" Offset="0,4"/>
+                    </Border.Shadow>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnExtremeHeatClicked"/>
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="0">
+                        <Image Source="extreme_heat_button.png" HeightRequest="190" Aspect="AspectFill"/>
+                        <VerticalStackLayout Padding="14,10,14,14" Spacing="2">
+                            <Label Text="EXTREME HEAT GUIDE" FontFamily="PoppinsBold" FontSize="14" TextColor="#1a1a1a"/>
+                            <Label Text="Tap to view" FontFamily="PoppinsRegular" FontSize="13" TextColor="#ab0404"/>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- ─────────────────────────────────────────────────
+                     SECTION: School Dangers
+                ───────────────────────────────────────────────── -->
+                <Label
+                    Text="School Dangers"
+                    TextColor="#1a1a1a"
+                    FontFamily="PoppinsBold"
+                    FontSize="16"
+                    Margin="2,10,0,2"/>
+
+                <!-- Fire -->
+                <Border StrokeShape="RoundRectangle 14" StrokeThickness="0" BackgroundColor="White">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Opacity="0.10" Radius="12" Offset="0,4"/>
+                    </Border.Shadow>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnFireClicked"/>
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="0">
+                        <Image Source="fire_button.png" HeightRequest="190" Aspect="AspectFill"/>
+                        <VerticalStackLayout Padding="14,10,14,14" Spacing="2">
+                            <Label Text="FIRE HAZARD GUIDE" FontFamily="PoppinsBold" FontSize="14" TextColor="#1a1a1a"/>
+                            <Label Text="Tap to view" FontFamily="PoppinsRegular" FontSize="13" TextColor="#ab0404"/>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Electrical Accident -->
+                <Border StrokeShape="RoundRectangle 14" StrokeThickness="0" BackgroundColor="White">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Opacity="0.10" Radius="12" Offset="0,4"/>
+                    </Border.Shadow>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnElectricalAccidentClicked"/>
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="0">
+                        <Image Source="electrical_accident_button.png" HeightRequest="190" Aspect="AspectFill"/>
+                        <VerticalStackLayout Padding="14,10,14,14" Spacing="2">
+                            <Label Text="ELECTRICAL ACCIDENT GUIDE" FontFamily="PoppinsBold" FontSize="14" TextColor="#1a1a1a"/>
+                            <Label Text="Tap to view" FontFamily="PoppinsRegular" FontSize="13" TextColor="#ab0404"/>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Structural Collapse -->
+                <Border StrokeShape="RoundRectangle 14" StrokeThickness="0" BackgroundColor="White">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Opacity="0.10" Radius="12" Offset="0,4"/>
+                    </Border.Shadow>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnStructuralCollapseClicked"/>
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="0">
+                        <Image Source="structural_collapse_button.png" HeightRequest="190" Aspect="AspectFill"/>
+                        <VerticalStackLayout Padding="14,10,14,14" Spacing="2">
+                            <Label Text="STRUCTURAL COLLAPSE GUIDE" FontFamily="PoppinsBold" FontSize="14" TextColor="#1a1a1a"/>
+                            <Label Text="Tap to view" FontFamily="PoppinsRegular" FontSize="13" TextColor="#ab0404"/>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Stampede -->
+                <Border StrokeShape="RoundRectangle 14" StrokeThickness="0" BackgroundColor="White">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Opacity="0.10" Radius="12" Offset="0,4"/>
+                    </Border.Shadow>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnStampedeClicked"/>
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="0">
+                        <Image Source="stampede_button.png" HeightRequest="190" Aspect="AspectFill"/>
+                        <VerticalStackLayout Padding="14,10,14,14" Spacing="2">
+                            <Label Text="STAMPEDE GUIDE" FontFamily="PoppinsBold" FontSize="14" TextColor="#1a1a1a"/>
+                            <Label Text="Tap to view" FontFamily="PoppinsRegular" FontSize="13" TextColor="#ab0404"/>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- ─────────────────────────────────────────────────
+                     SECTION: Injuries and Medical Conditions
+                ───────────────────────────────────────────────── -->
+                <Label
+                    Text="Injuries and Medical Conditions"
+                    TextColor="#1a1a1a"
+                    FontFamily="PoppinsBold"
+                    FontSize="16"
+                    Margin="2,10,0,2"/>
+
+                <!-- Asthma Attack -->
+                <Border StrokeShape="RoundRectangle 14" StrokeThickness="0" BackgroundColor="White">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Opacity="0.10" Radius="12" Offset="0,4"/>
+                    </Border.Shadow>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnAsthmaAttackClicked"/>
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="0">
+                        <Image Source="asthma_attack_button.png" HeightRequest="190" Aspect="AspectFill"/>
+                        <VerticalStackLayout Padding="14,10,14,14" Spacing="2">
+                            <Label Text="ASTHMA ATTACK GUIDE" FontFamily="PoppinsBold" FontSize="14" TextColor="#1a1a1a"/>
+                            <Label Text="Tap to view" FontFamily="PoppinsRegular" FontSize="13" TextColor="#ab0404"/>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Fracture -->
+                <Border StrokeShape="RoundRectangle 14" StrokeThickness="0" BackgroundColor="White">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Opacity="0.10" Radius="12" Offset="0,4"/>
+                    </Border.Shadow>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnFractureClicked"/>
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="0">
+                        <Image Source="fracture_button.png" HeightRequest="190" Aspect="AspectFill"/>
+                        <VerticalStackLayout Padding="14,10,14,14" Spacing="2">
+                            <Label Text="FRACTURE GUIDE" FontFamily="PoppinsBold" FontSize="14" TextColor="#1a1a1a"/>
+                            <Label Text="Tap to view" FontFamily="PoppinsRegular" FontSize="13" TextColor="#ab0404"/>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Sprain -->
+                <Border StrokeShape="RoundRectangle 14" StrokeThickness="0" BackgroundColor="White">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Opacity="0.10" Radius="12" Offset="0,4"/>
+                    </Border.Shadow>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnSprainClicked"/>
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="0">
+                        <Image Source="sprain_button.png" HeightRequest="190" Aspect="AspectFill"/>
+                        <VerticalStackLayout Padding="14,10,14,14" Spacing="2">
+                            <Label Text="SPRAIN GUIDE" FontFamily="PoppinsBold" FontSize="14" TextColor="#1a1a1a"/>
+                            <Label Text="Tap to view" FontFamily="PoppinsRegular" FontSize="13" TextColor="#ab0404"/>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Strain -->
+                <Border StrokeShape="RoundRectangle 14" StrokeThickness="0" BackgroundColor="White">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Opacity="0.10" Radius="12" Offset="0,4"/>
+                    </Border.Shadow>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnStrainClicked"/>
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="0">
+                        <Image Source="strain_button.png" HeightRequest="190" Aspect="AspectFill"/>
+                        <VerticalStackLayout Padding="14,10,14,14" Spacing="2">
+                            <Label Text="STRAIN GUIDE" FontFamily="PoppinsBold" FontSize="14" TextColor="#1a1a1a"/>
+                            <Label Text="Tap to view" FontFamily="PoppinsRegular" FontSize="13" TextColor="#ab0404"/>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Burn -->
+                <Border StrokeShape="RoundRectangle 14" StrokeThickness="0" BackgroundColor="White">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Opacity="0.10" Radius="12" Offset="0,4"/>
+                    </Border.Shadow>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnBurnClicked"/>
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="0">
+                        <Image Source="burn_button.png" HeightRequest="190" Aspect="AspectFill"/>
+                        <VerticalStackLayout Padding="14,10,14,14" Spacing="2">
+                            <Label Text="BURN GUIDE" FontFamily="PoppinsBold" FontSize="14" TextColor="#1a1a1a"/>
+                            <Label Text="Tap to view" FontFamily="PoppinsRegular" FontSize="13" TextColor="#ab0404"/>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Cut / Laceration -->
+                <Border StrokeShape="RoundRectangle 14" StrokeThickness="0" BackgroundColor="White">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Opacity="0.10" Radius="12" Offset="0,4"/>
+                    </Border.Shadow>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnCutLacerationClicked"/>
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="0">
+                        <Image Source="cut_button.png" HeightRequest="190" Aspect="AspectFill"/>
+                        <VerticalStackLayout Padding="14,10,14,14" Spacing="2">
+                            <Label Text="CUT / LACERATION GUIDE" FontFamily="PoppinsBold" FontSize="14" TextColor="#1a1a1a"/>
+                            <Label Text="Tap to view" FontFamily="PoppinsRegular" FontSize="13" TextColor="#ab0404"/>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Nosebleed -->
+                <Border StrokeShape="RoundRectangle 14" StrokeThickness="0" BackgroundColor="White">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Opacity="0.10" Radius="12" Offset="0,4"/>
+                    </Border.Shadow>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnNosebleedClicked"/>
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="0">
+                        <Image Source="nosebleed_button.png" HeightRequest="190" Aspect="AspectFill"/>
+                        <VerticalStackLayout Padding="14,10,14,14" Spacing="2">
+                            <Label Text="NOSEBLEED GUIDE" FontFamily="PoppinsBold" FontSize="14" TextColor="#1a1a1a"/>
+                            <Label Text="Tap to view" FontFamily="PoppinsRegular" FontSize="13" TextColor="#ab0404"/>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Fainting -->
+                <Border StrokeShape="RoundRectangle 14" StrokeThickness="0" BackgroundColor="White">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Opacity="0.10" Radius="12" Offset="0,4"/>
+                    </Border.Shadow>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnFaintingClicked"/>
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="0">
+                        <Image Source="fainting_button.png" HeightRequest="190" Aspect="AspectFill"/>
+                        <VerticalStackLayout Padding="14,10,14,14" Spacing="2">
+                            <Label Text="FAINTING ACCIDENT GUIDE" FontFamily="PoppinsBold" FontSize="14" TextColor="#1a1a1a"/>
+                            <Label Text="Tap to view" FontFamily="PoppinsRegular" FontSize="13" TextColor="#ab0404"/>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Heat Stroke -->
+                <Border StrokeShape="RoundRectangle 14" StrokeThickness="0" BackgroundColor="White">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Opacity="0.10" Radius="12" Offset="0,4"/>
+                    </Border.Shadow>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnHeatStrokeClicked"/>
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="0">
+                        <Image Source="heat_stroke_button.png" HeightRequest="190" Aspect="AspectFill"/>
+                        <VerticalStackLayout Padding="14,10,14,14" Spacing="2">
+                            <Label Text="HEAT STROKE GUIDE" FontFamily="PoppinsBold" FontSize="14" TextColor="#1a1a1a"/>
+                            <Label Text="Tap to view" FontFamily="PoppinsRegular" FontSize="13" TextColor="#ab0404"/>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Choking -->
+                <Border StrokeShape="RoundRectangle 14" StrokeThickness="0" BackgroundColor="White">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Opacity="0.10" Radius="12" Offset="0,4"/>
+                    </Border.Shadow>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnChokingClicked"/>
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="0">
+                        <Image Source="choking_button.png" HeightRequest="190" Aspect="AspectFill"/>
+                        <VerticalStackLayout Padding="14,10,14,14" Spacing="2">
+                            <Label Text="CHOKING GUIDE" FontFamily="PoppinsBold" FontSize="14" TextColor="#1a1a1a"/>
+                            <Label Text="Tap to view" FontFamily="PoppinsRegular" FontSize="13" TextColor="#ab0404"/>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

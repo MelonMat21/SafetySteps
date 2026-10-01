@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:media="clr-namespace:CommunityToolkit.Maui.Views;assembly=CommunityToolkit.Maui.MediaElement"
+             x:Class="SAFETY_STEPS.TutorialPage"
+             Title="Tutorial"
+             BackgroundColor="#F2F2F2"
+             Shell.NavBarIsVisible="False">
+
+    <VerticalStackLayout Spacing="0">
+
+        <!-- Header -->
+        <HorizontalStackLayout BackgroundColor="#8B0000" Padding="10,12">
+            <ImageButton Source="backbtn.png"
+                         HeightRequest="10"
+                         WidthRequest="10"
+                         VerticalOptions="Center"
+                         Clicked="OnBackClicked" />
+            <Label Text="Tutorial"
+                   TextColor="White"
+                   FontSize="20"
+                   FontFamily="PoppinsBold"
+                   VerticalOptions="Center"
+                   Margin="10,0,0,0" />
+        </HorizontalStackLayout>
+        <BoxView HeightRequest="1" BackgroundColor="Gray" HorizontalOptions="Fill" />
+
+        <!-- Video Player -->
+        <media:MediaElement
+    x:Name="TutorialVideo"
+    Source="Tutorial.mp4"
+    HeightRequest="220"
+    HorizontalOptions="Fill"
+    ShouldShowPlaybackControls="True"
+    ShouldAutoPlay="False"
+    Margin="0,16,0,0" />
+
+        <Label
+            Text="Watch the tutorial above to get started."
+            FontSize="14"
+            TextColor="#444444"
+            HorizontalOptions="Center"
+            Margin="0,12,0,0" />
+
+    </VerticalStackLayout>
+
+</ContentPage>

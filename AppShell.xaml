@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="SAFETY_STEPS.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:SAFETY_STEPS"
+    Shell.NavBarIsVisible="False"
+    FlyoutBackgroundColor="White"
+    Shell.ForegroundColor="Black"
+    FlyoutBehavior="Disabled"
+    Title="SAFETY_STEPS">
+
+
+    <!-- ══════════════════════════════════════════════════════════
+         FLYOUT HEADER  (only visible when flyout is open)
+    ══════════════════════════════════════════════════════════ -->
+    <Shell.FlyoutHeader>
+        <Grid
+            BackgroundColor="#B22222"
+            Padding="20,50,20,20"
+            RowDefinitions="Auto,Auto">
+
+            <!-- App / section label -->
+            <Label
+                Grid.Row="1"
+                Text="Settings"
+                FontSize="20"
+                FontAttributes="Bold"
+                TextColor="white"
+                Margin="0,12,0,0" />
+        </Grid>
+    </Shell.FlyoutHeader>
+
+    <!-- ══════════════════════════════════════════════════════════
+         FLYOUT FOOTER  — Logout button pinned to the bottom
+    ══════════════════════════════════════════════════════════ -->
+    <Shell.FlyoutFooter>
+        <VerticalStackLayout
+            BackgroundColor="#B22222"
+            Padding="16,12,16,32"
+            Spacing="0">
+
+            <!-- Divider -->
+            <BoxView
+                HeightRequest="1"
+                Color="white"
+                Margin="0,0,0,14"/>
+
+            <!-- Logout row -->
+            <Grid
+                ColumnDefinitions="Auto,*"
+                ColumnSpacing="14">
+                <Grid.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnFlyoutLogoutTapped"/>
+                </Grid.GestureRecognizers>
+
+                <!-- Icon badge -->
+                <Border
+                    Grid.Column="0"
+                    WidthRequest="38" HeightRequest="38"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 10"
+                    BackgroundColor="white"
+                    VerticalOptions="Center">
+                    <Label
+                        Text="🚪"
+                        FontSize="18"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"/>
+                </Border>
+
+                <!-- Label -->
+                <Label
+                    Grid.Column="1"
+                    Text="Log Out"
+                    FontSize="15"
+                    FontFamily="PoppinsSemiBold"
+                    TextColor="white"
+                    VerticalOptions="Center"/>
+            </Grid>
+
+        </VerticalStackLayout>
+    </Shell.FlyoutFooter>
+
+    <!-- ══════════════════════════════════════════════════════════
+         FLYOUT ITEMS  — only Settings and About Us appear here
+    ══════════════════════════════════════════════════════════ -->
+    <Shell.Items>
+
+        <FlyoutItem Route="LoginPage"
+                    FlyoutItemIsVisible="False"
+                    Shell.NavBarIsVisible="False">
+            <ShellContent Route="LoginPage"
+                          Shell.NavBarIsVisible="False"
+                          ContentTemplate="{DataTemplate local:LoginPage}"/>
+        </FlyoutItem>
+
+        <!-- Settings flyout entry -->
+        <FlyoutItem Title="Settings" Icon="settings.png" Route="SettingsPage">
+            <ShellContent
+                ContentTemplate="{DataTemplate local:SettingsPage}"
+                Route="SettingsPage"
+                Shell.NavBarIsVisible="False" />
+        </FlyoutItem>
+
+        <!-- About Us flyout entry -->
+        <FlyoutItem Title="About Us" Icon="info.png" Route="AboutUs">
+            <ShellContent
+                ContentTemplate="{DataTemplate local:AboutUs}"
+                Route="AboutUs"
+                Shell.NavBarIsVisible="False" />
+        </FlyoutItem>
+
+        <FlyoutItem Title="Tutorial" Icon="info.png" Route="Tutorial">
+            <ShellContent
+                ContentTemplate="{DataTemplate local:TutorialPage}"
+                Route="TutorialPage"
+                Shell.NavBarIsVisible="False" />
+        </FlyoutItem>
+
+
+        <!-- ── Student Tab Bar ──────────────────────────────────────── -->
+        <!-- FlyoutItemIsVisible="False" keeps the tabs out of the       -->
+        <!-- flyout list while the bottom tab bar still works normally.  -->
+        <TabBar Route="StudentTabs" Shell.FlyoutItemIsVisible="False">
+            <ShellContent Title="Home"    Icon="home.png"          Route="Home"    ContentTemplate="{DataTemplate local:HomePage}" />
+            <ShellContent Title="Alert"   Icon="alert.png"         Route="Alert"   ContentTemplate="{DataTemplate local:AlertPage}" />
+            <ShellContent Title="History" Icon="history.png"       Route="History" ContentTemplate="{DataTemplate local:HistoryPage}" />
+            <ShellContent Title="Info"    Icon="info.png"          Route="Info"    ContentTemplate="{DataTemplate local:InfosPage}" />
+            <ShellContent Title="Profile" Icon="profile_white.png" Route="Profile" ContentTemplate="{DataTemplate local:StudentProfile}" />
+        </TabBar>
+
+        <!-- ── Admin Tab Bar ────────────────────────────────────────── -->
+        <!-- FlyoutItemIsVisible="False" + FlyoutBehavior="Disabled"    -->
+        <!-- means admins never see or can open the flyout at all.      -->
+        <TabBar Route="AdminTabs"
+                Shell.FlyoutItemIsVisible="False">
+            <ShellContent Title="Home"    Icon="home.png"          Route="AdminHome"      ContentTemplate="{DataTemplate local:HomePageAdmin}" />
+            <ShellContent Title="Reports" Icon="alert.png"         Route="AdminReports"   ContentTemplate="{DataTemplate local:ReportHistoryAdmin}" />
+            <ShellContent Title="Calls"   Icon="number_black.png"  Route="AdminCalls"     ContentTemplate="{DataTemplate local:IncomingCallPage}" />
+            <ShellContent Title="Calls"   Icon="history.png"       Route="AdminCallsPage" ContentTemplate="{DataTemplate local:CallsPage}" />
+            <ShellContent Title="Profile" Icon="profile_white.png" Route="AdminProfile"   ContentTemplate="{DataTemplate local:AdminProfile}" />
+        </TabBar>
+
+    </Shell.Items>
+
+</Shell>

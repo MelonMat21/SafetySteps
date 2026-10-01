@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SAFETY_STEPS.AboutUs"
+             Title="About Us"
+             BackgroundColor="#F2F2F2"
+             Shell.NavBarIsVisible="False">
+
+    <!-- Root Grid: Header + ScrollView + Footer -->
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- ══════════════════════════════════════════════ -->
+        <!--               CUSTOM HEADER                   -->
+        <!-- ══════════════════════════════════════════════ -->
+        <VerticalStackLayout Grid.Row="0" Spacing="0">
+            <HorizontalStackLayout BackgroundColor="#8B0000" Padding="10,12">
+                <ImageButton Source="backbtn.png"
+                             HeightRequest="10"
+                             WidthRequest="10"
+                             VerticalOptions="Center"
+                             Clicked="OnBackClicked" />
+                <Label Text="About Us"
+                       TextColor="White"
+                       FontSize="20"
+                       FontFamily="PoppinsBold"
+                       VerticalOptions="Center"
+                       Margin="10,0,0,0" />
+            </HorizontalStackLayout>
+            <BoxView HeightRequest="1" BackgroundColor="Gray" HorizontalOptions="Fill" />
+        </VerticalStackLayout>
+
+        <!-- ══════════════════════════════════════════════ -->
+        <!--               SCROLLABLE CONTENT              -->
+        <!-- ══════════════════════════════════════════════ -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,16,16,20" Spacing="14">
+
+                <!-- ════════════════════════════════════ -->
+                <!--         ABOUT SAFETYSTEPS CARD      -->
+                <!-- ════════════════════════════════════ -->
+                <Frame BackgroundColor="White"
+                       CornerRadius="14"
+                       Padding="18,16"
+                       HasShadow="True"
+                       BorderColor="Transparent">
+                    <VerticalStackLayout Spacing="14">
+
+                        <Label Text="ABOUT SAFETYSTEPS"
+                               FontSize="17"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"
+                               HorizontalTextAlignment="Center"
+                               TextColor="#8B0000" />
+
+                        <BoxView HeightRequest="2"
+                                 WidthRequest="40"
+                                 BackgroundColor="#8B0000"
+                                 HorizontalOptions="Center"
+                                 CornerRadius="2" />
+
+                        <Label FontSize="13"
+                               HorizontalTextAlignment="Justify"
+                               TextColor="#444444"
+                               LineHeight="1.4"
+                               Text="SafetySteps is a mobile safety system designed to improve school safety and emergency response within the school community. Our goal is to provide students, teachers, and administrators with a faster and more reliable way to report incidents, send emergency alerts, and access important safety information. Developed by dedicated student researchers, SafetySteps aims to create a safer and more prepared learning environment through the use of technology, communication, and quick response features. We believe that every student deserves to feel secure and protected inside the school campus." />
+
+                        <!-- Feature Buttons 2x2 Grid -->
+                        <Grid ColumnDefinitions="*,*"
+                              RowDefinitions="Auto,Auto"
+                              ColumnSpacing="10"
+                              RowSpacing="10"
+                              Margin="0,4,0,0">
+
+                            <!-- Instant Alert -->
+                            <Frame Grid.Row="0" Grid.Column="0"
+                                   BackgroundColor="#8B0000"
+                                   CornerRadius="10"
+                                   Padding="12,10"
+                                   HasShadow="False"
+                                   BorderColor="Transparent">
+                                <VerticalStackLayout Spacing="3" HorizontalOptions="Center">
+                                    <Label Text="🔔"
+                                           FontSize="22"
+                                           HorizontalOptions="Center"
+                                           TextColor="White" />
+                                    <Label Text="Instant Alert"
+                                           FontSize="12"
+                                           FontAttributes="Bold"
+                                           TextColor="White"
+                                           HorizontalOptions="Center"
+                                           HorizontalTextAlignment="Center" />
+                                    <Label Text="Send emergency notifications in seconds"
+                                           FontSize="10"
+                                           TextColor="White"
+                                           HorizontalTextAlignment="Center" />
+                                </VerticalStackLayout>
+                            </Frame>
+
+                            <!-- Incident Report -->
+                            <Frame Grid.Row="0" Grid.Column="1"
+                                   BackgroundColor="#8B0000"
+                                   CornerRadius="10"
+                                   Padding="12,10"
+                                   HasShadow="False"
+                                   BorderColor="Transparent">
+                                <VerticalStackLayout Spacing="3" HorizontalOptions="Center">
+                                    <Label Text="📋"
+                                           FontSize="22"
+                                           HorizontalOptions="Center"
+                                           TextColor="White" />
+                                    <Label Text="Incident Report"
+                                           FontSize="12"
+                                           FontAttributes="Bold"
+                                           TextColor="White"
+                                           HorizontalOptions="Center"
+                                           HorizontalTextAlignment="Center" />
+                                    <Label Text="Log and track safety incidents easily"
+                                           FontSize="10"
+                                           TextColor="White"
+                                           HorizontalTextAlignment="Center" />
+                                </VerticalStackLayout>
+                            </Frame>
+
+                            <!-- Live Location -->
+                            <Frame Grid.Row="1" Grid.Column="0"
+                                   BackgroundColor="#8B0000"
+                                   CornerRadius="10"
+                                   Padding="12,10"
+                                   HasShadow="False"
+                                   BorderColor="Transparent">
+                                <VerticalStackLayout Spacing="3" HorizontalOptions="Center">
+                                    <Label Text="📍"
+                                           FontSize="22"
+                                           HorizontalOptions="Center"
+                                           TextColor="White" />
+                                    <Label Text="Live Location"
+                                           FontSize="12"
+                                           FontAttributes="Bold"
+                                           TextColor="White"
+                                           HorizontalOptions="Center"
+                                           HorizontalTextAlignment="Center" />
+                                    <Label Text="Share your real-time location"
+                                           FontSize="10"
+                                           TextColor="White"
+                                           HorizontalTextAlignment="Center" />
+                                </VerticalStackLayout>
+                            </Frame>
+
+                            <!-- Emergency Guide -->
+                            <Frame Grid.Row="1" Grid.Column="1"
+                                   BackgroundColor="#8B0000"
+                                   CornerRadius="10"
+                                   Padding="12,10"
+                                   HasShadow="False"
+                                   BorderColor="Transparent">
+                                <VerticalStackLayout Spacing="3" HorizontalOptions="Center">
+                                    <Label Text="🛡️"
+                                           FontSize="22"
+                                           HorizontalOptions="Center"
+                                           TextColor="White" />
+                                    <Label Text="Emergency Guide"
+                                           FontSize="12"
+                                           FontAttributes="Bold"
+                                           TextColor="White"
+                                           HorizontalOptions="Center"
+                                           HorizontalTextAlignment="Center" />
+                                    <Label Text="Access safety protocols anytime"
+                                           FontSize="10"
+                                           TextColor="White"
+                                           HorizontalTextAlignment="Center" />
+                                </VerticalStackLayout>
+                            </Frame>
+
+                        </Grid>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- ════════════════════════════════════ -->
+                <!--           OUR VISION CARD           -->
+                <!-- ════════════════════════════════════ -->
+                <Frame BackgroundColor="White"
+                       CornerRadius="14"
+                       Padding="18,16"
+                       HasShadow="True"
+                       BorderColor="Transparent">
+                    <VerticalStackLayout Spacing="12">
+
+                        <Label Text="Our Vision"
+                               FontSize="17"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"
+                               HorizontalTextAlignment="Center"
+                               TextColor="#8B0000" />
+
+                        <BoxView HeightRequest="2"
+                                 WidthRequest="40"
+                                 BackgroundColor="#8B0000"
+                                 HorizontalOptions="Center"
+                                 CornerRadius="2" />
+
+                        <Label FontSize="13"
+                               HorizontalTextAlignment="Justify"
+                               TextColor="#444444"
+                               LineHeight="1.4"
+                               Text="To establish a safe, responsive, and technology driven learning environment at STI College Fairview, where students, faculty, and staff are protected through fast, reliable, and efficient emergency communication and response systems." />
+
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- ════════════════════════════════════ -->
+                <!--           OUR MISSION CARD          -->
+                <!-- ════════════════════════════════════ -->
+                <Frame BackgroundColor="White"
+                       CornerRadius="14"
+                       Padding="18,16"
+                       HasShadow="True"
+                       BorderColor="Transparent">
+                    <VerticalStackLayout Spacing="12">
+
+                        <Label Text="Our Mission"
+                               FontSize="17"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"
+                               HorizontalTextAlignment="Center"
+                               TextColor="#8B0000" />
+
+                        <BoxView HeightRequest="2"
+                                 WidthRequest="40"
+                                 BackgroundColor="#8B0000"
+                                 HorizontalOptions="Center"
+                                 CornerRadius="2" />
+
+                        <Label FontSize="13"
+                               HorizontalTextAlignment="Justify"
+                               TextColor="#444444"
+                               LineHeight="1.4"
+                               Text="SafetySteps aims to enhance school safety by developing and implementing a mobile based emergency alert system that enables quick reporting, real time location tracking, and immediate coordination between students, staff, and administrators. The system is designed to reduce response time, improve emergency preparedness, and support timely decision making during critical situations, thereby fostering a safer and more secure campus environment." />
+
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- ════════════════════════════════════ -->
+                <!--            OUR TEAM CARD            -->
+                <!-- ════════════════════════════════════ -->
+                <Frame BackgroundColor="White"
+                       CornerRadius="14"
+                       Padding="18,16"
+                       HasShadow="True"
+                       BorderColor="Transparent">
+                    <VerticalStackLayout Spacing="16">
+
+                        <Label Text="Our Team"
+                               FontSize="17"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"
+                               HorizontalTextAlignment="Center"
+                               TextColor="#8B0000" />
+
+                        <BoxView HeightRequest="2"
+                                 WidthRequest="40"
+                                 BackgroundColor="#8B0000"
+                                 HorizontalOptions="Center"
+                                 CornerRadius="2" />
+
+                        <!-- Team Row 1 -->
+                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+
+                            <VerticalStackLayout Grid.Column="0" Spacing="6" HorizontalOptions="Center">
+                                <Frame WidthRequest="85" HeightRequest="85"
+                                       CornerRadius="42" Padding="0"
+                                       IsClippedToBounds="True"
+                                       HasShadow="False"
+                                       BorderColor="#DDDDDD">
+                                    <Image Source="jm.png" Aspect="AspectFill" />
+                                </Frame>
+                                <Label Text="John Marcelo Balingasa"
+                                       FontSize="10"
+                                       HorizontalTextAlignment="Center"
+                                       HorizontalOptions="Center"
+                                       TextColor="#333333" />
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Column="1" Spacing="6" HorizontalOptions="Center">
+                                <Frame WidthRequest="85" HeightRequest="85"
+                                       CornerRadius="42" Padding="0"
+                                       IsClippedToBounds="True"
+                                       HasShadow="False"
+                                       BorderColor="#DDDDDD">
+                                    <Image Source="step.png" Aspect="AspectFill" />
+                                </Frame>
+                                <Label Text="Stepanie Angel Belleza"
+                                       FontSize="10"
+                                       HorizontalTextAlignment="Center"
+                                       HorizontalOptions="Center"
+                                       TextColor="#333333" />
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Column="2" Spacing="6" HorizontalOptions="Center">
+                                <Frame WidthRequest="85" HeightRequest="85"
+                                       CornerRadius="42" Padding="0"
+                                       IsClippedToBounds="True"
+                                       HasShadow="False"
+                                       BorderColor="#DDDDDD">
+                                    <Image Source="lia.png" Aspect="AspectFill" />
+                                </Frame>
+                                <Label Text="Junelia Dion Espejon"
+                                       FontSize="10"
+                                       HorizontalTextAlignment="Center"
+                                       HorizontalOptions="Center"
+                                       TextColor="#333333" />
+                            </VerticalStackLayout>
+
+                        </Grid>
+
+                        <!-- Team Row 2 -->
+                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+
+                            <VerticalStackLayout Grid.Column="0" Spacing="6" HorizontalOptions="Center">
+                                <Frame WidthRequest="85" HeightRequest="85"
+                                       CornerRadius="42" Padding="0"
+                                       IsClippedToBounds="True"
+                                       HasShadow="False"
+                                       BorderColor="#DDDDDD">
+                                    <Image Source="mat.png" Aspect="AspectFill" />
+                                </Frame>
+                                <Label Text="Mathew Mazo"
+                                       FontSize="10"
+                                       HorizontalTextAlignment="Center"
+                                       HorizontalOptions="Center"
+                                       TextColor="#333333" />
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Column="1" Spacing="6" HorizontalOptions="Center">
+                                <Frame WidthRequest="85" HeightRequest="85"
+                                       CornerRadius="42" Padding="0"
+                                       IsClippedToBounds="True"
+                                       HasShadow="False"
+                                       BorderColor="#DDDDDD">
+                                    <Image Source="nati.png" Aspect="AspectFill" />
+                                </Frame>
+                                <Label Text="Dimple Jane Natividad"
+                                       FontSize="10"
+                                       HorizontalTextAlignment="Center"
+                                       HorizontalOptions="Center"
+                                       TextColor="#333333" />
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Column="2" Spacing="6" HorizontalOptions="Center">
+                                <Frame WidthRequest="85" HeightRequest="85"
+                                       CornerRadius="42" Padding="0"
+                                       IsClippedToBounds="True"
+                                       HasShadow="False"
+                                       BorderColor="#DDDDDD">
+                                    <Image Source="kim.png" Aspect="AspectFill" />
+                                </Frame>
+                                <Label Text="Kim Ashley Panti"
+                                       FontSize="10"
+                                       HorizontalTextAlignment="Center"
+                                       HorizontalOptions="Center"
+                                       TextColor="#333333" />
+                            </VerticalStackLayout>
+
+                        </Grid>
+
+                        <!-- Team Row 3 — Centered last member -->
+                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+
+                            <VerticalStackLayout Grid.Column="1" Spacing="6" HorizontalOptions="Center">
+                                <Frame WidthRequest="85" HeightRequest="85"
+                                       CornerRadius="42" Padding="0"
+                                       IsClippedToBounds="True"
+                                       HasShadow="False"
+                                       BorderColor="#DDDDDD">
+                                    <Image Source="lean.jpg" Aspect="AspectFill" />
+                                </Frame>
+                                <Label Text="Leann Roi Villanveva"
+                                       FontSize="10"
+                                       HorizontalTextAlignment="Center"
+                                       HorizontalOptions="Center"
+                                       TextColor="#333333" />
+                            </VerticalStackLayout>
+
+                        </Grid>
+
+                    </VerticalStackLayout>
+                </Frame>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- ══════════════════════════════════════════════ -->
+        <!--          STICKY FOOTER (Grid.Row="1")         -->
+        <!-- ══════════════════════════════════════════════ -->
+        <VerticalStackLayout Grid.Row="2"
+                             BackgroundColor="#8B0000"
+                             Padding="20,14,20,20"
+                             Spacing="4">
+
+            <Label Text="SafetySteps"
+                   FontSize="14"
+                   FontAttributes="Bold"
+                   TextColor="White" />
+
+            <Label Text="44 Saint Joseph Street Barangay Holy Spirit Republic Avenue Q.C."
+                   FontSize="11"
+                   TextColor="#FFCCCC" />
+
+            <Label FontSize="11" TextColor="White">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="Email: " TextColor="#FFCCCC" FontSize="11" />
+                        <Span Text="safetysteps2@gmail.com"
+                              TextColor="White"
+                              FontSize="11"
+                              TextDecorations="Underline" />
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+
+            <Label Text="Contact Number: 09123456789"
+                   FontSize="11"
+                   TextColor="#FFCCCC" />
+
+            <Label Text="Facebook Page: SafetySteps"
+                   FontSize="11"
+                   TextColor="#FFCCCC" />
+
+        </VerticalStackLayout>
+
+    </Grid>
+
+</ContentPage>

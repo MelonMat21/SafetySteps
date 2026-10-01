@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Larger than default MAUI sizing (61x108dp) — uses Android 12 max icon bounds for portrait art -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+	<item
+		android:width="162dp"
+		android:height="288dp"
+		android:gravity="center">
+		<bitmap
+			android:gravity="fill"
+			android:src="@drawable/safetysplash"
+			android:mipMap="true" />
+	</item>
+</layer-list>

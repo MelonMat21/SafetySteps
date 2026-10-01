@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SAFETY_STEPS.StudentProfile"
+             BackgroundColor="white"
+             Title="StudentProfile">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="0">
+
+            <!-- ══ Header bar -->
+            <Grid
+                HeightRequest="60"
+                BackgroundColor="#ab0404"
+                ColumnDefinitions="*,Auto"
+                Padding="10,0">
+
+                <!-- Left: Page title -->
+                <Label
+                    Grid.Column="0"
+                    Text="Profile"
+                    TextColor="White"
+                    FontSize="18"
+                    FontFamily="PoppinsBold"
+                    VerticalOptions="Center"
+                    Margin="10,0,0,0"/>
+
+                <!-- Right: Settings gear icon (student-only flyout trigger) -->
+                <Border
+                    Grid.Column="1"
+                    WidthRequest="36"
+                    HeightRequest="36"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 18"
+                    BackgroundColor="Grey"
+                    VerticalOptions="Center"
+                    Margin="0,0,8,0">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnSettingsTapped"/>
+                    </Border.GestureRecognizers>
+                    <Label
+                        Text="⚙️"
+                        FontSize="18"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"/>
+                </Border>
+
+            </Grid>
+
+            <!-- ══ Body -->
+            <VerticalStackLayout Padding="20" Spacing="15" BackgroundColor="White">
+
+                <!-- ── Profile image (circular, centered) -->
+                <Grid HorizontalOptions="Center">
+                    <Border
+                        StrokeShape="Ellipse"
+                        StrokeThickness="2"
+                        Stroke="#ab0404"
+                        HeightRequest="200"
+                        WidthRequest="200"
+                        HorizontalOptions="Center">
+                        <Image
+                            x:Name="ProfileImage"
+                            Source="profile2.png"
+                            Aspect="AspectFill"
+                            HeightRequest="200"
+                            WidthRequest="200"/>
+                    </Border>
+
+                    <!-- Full-size tap target for photo picker -->
+                    <ImageButton
+                        BackgroundColor="Transparent"
+                        HeightRequest="200"
+                        WidthRequest="200"
+                        HorizontalOptions="Center"
+                        Clicked="OnProfileImageClicked"/>
+                </Grid>
+
+                <!-- ── Display name with pencil edit icon -->
+                <HorizontalStackLayout HorizontalOptions="Center" Spacing="8">
+                    <Label
+                        x:Name="DisplayNameLabel"
+                        Text="—"
+                        FontSize="20"
+                        FontFamily="PoppinsBold"
+                        TextColor="#1a1a1a"
+                        VerticalOptions="Center"/>
+                    <Border
+                        Stroke="Black"
+                        StrokeThickness="1"
+                        WidthRequest="36"
+                        HeightRequest="36"
+                        StrokeShape="RoundRectangle 16"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center">
+
+                        <Label
+                            Text="✏️"
+                            FontSize="16"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center">
+
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnEditNameTapped"/>
+                            </Label.GestureRecognizers>
+
+                        </Label>
+                    </Border>
+                </HorizontalStackLayout>
+
+                <!-- ── Student ID row -->
+                <HorizontalStackLayout HorizontalOptions="Center" Spacing="6">
+                    <Label
+                        Text="Student ID:"
+                        FontSize="14"
+                        FontFamily="PoppinsSemiBold"
+                        TextColor="#666666"
+                        VerticalOptions="Center"/>
+                    <Label
+                        x:Name="UserIdLabel"
+                        Text="—"
+                        FontSize="14"
+                        FontFamily="PoppinsRegular"
+                        TextColor="#1a1a1a"
+                        VerticalOptions="Center"/>
+                </HorizontalStackLayout>
+
+                <!-- ── Inline name-edit card (hidden by default) -->
+                <Border
+                    x:Name="EditNameCard"
+                    IsVisible="False"
+                    StrokeShape="RoundRectangle 12"
+                    StrokeThickness="1"
+                    Stroke="#dddddd"
+                    Padding="16"
+                    BackgroundColor="#f9f9f9">
+                    <VerticalStackLayout Spacing="10">
+                        <Label
+                            Text="Edit Display Name"
+                            FontSize="13"
+                            FontFamily="PoppinsSemiBold"
+                            TextColor="#666666"/>
+                        <Entry
+                            x:Name="NameEntry"
+                            Placeholder="Enter your name"
+                            FontSize="15"
+                            TextColor="Black"
+                            FontFamily="PoppinsRegular"
+                            BackgroundColor="White"/>
+                        <HorizontalStackLayout Spacing="10" HorizontalOptions="End">
+                            <Button
+                                Text="Cancel"
+                                Clicked="OnCancelNameClicked"
+                                BackgroundColor="#eeeeee"
+                                TextColor="#333333"
+                                FontFamily="PoppinsSemiBold"
+                                CornerRadius="8"
+                                HeightRequest="40"
+                                WidthRequest="90"/>
+                            <Button
+                                Text="Save"
+                                Clicked="OnSaveNameClicked"
+                                BackgroundColor="#ab0404"
+                                TextColor="White"
+                                FontFamily="PoppinsSemiBold"
+                                CornerRadius="8"
+                                HeightRequest="40"
+                                WidthRequest="90"/>
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- ── Change Password button -->
+                <Border
+                    Background="#1565C0"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 15"
+                    HeightRequest="56"
+                    Margin="10,0,10,20">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnChangePasswordTapped"/>
+                    </Border.GestureRecognizers>
+                    <Border.Shadow>
+                        <Shadow Brush="#1565C0" Opacity="0.4" Radius="10" Offset="5,5"/>
+                    </Border.Shadow>
+                    <HorizontalStackLayout
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"
+                            Spacing="10">
+                        <Label
+                            Text="🔑  Change Password"
+                            FontSize="16"
+                            FontFamily="PoppinsBold"
+                            TextColor="White"
+                            VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

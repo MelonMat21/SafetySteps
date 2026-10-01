@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SAFETY_STEPS.AlertPage"
+             Title="AlertPage"
+             BackgroundColor="White">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="12">
+            <Border Background="#ab0404" StrokeThickness="0">
+                <VerticalStackLayout
+                    HeightRequest="60"
+                    Background="#ab0404"
+                    VerticalOptions="Start"
+                    HorizontalOptions="Start"
+                    Spacing="8"
+                    Padding="10">
+
+                    <HorizontalStackLayout Spacing="0">
+                        <Label
+                            Text="Emergency Reports"
+                            TextColor="White"
+                            FontSize="18"
+                            FontFamily="PoppinsBold"
+                            Padding="10,8,0,0"/>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <VerticalStackLayout Spacing="15" Margin="25,15">
+
+                <HorizontalStackLayout Spacing="12">
+                    <Image Source="profile_gray.png" WidthRequest="20" HeightRequest="20"/>
+                    <Label Text="Name (Optional)" TextColor="Black" FontSize="15" FontFamily="PoppinsRegular"/>
+                </HorizontalStackLayout>
+
+                <Border
+                    Stroke="#E0E0E0"
+                    BackgroundColor="White"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 10"
+                    Padding="10, 5"
+                    HorizontalOptions="FillAndExpand"
+                    MaximumWidthRequest="400">
+                    <Border.Shadow>
+                        <Shadow Brush="gray" Offset="0,4" Radius="10" Opacity="2"/>
+                    </Border.Shadow>
+                    <Entry x:Name="NameEntry"
+                        Placeholder="Enter name"
+                        FontFamily="PoppinsRegular"
+                        TextColor="Black"/>
+                </Border>
+
+                <!--contact-->
+                <HorizontalStackLayout Spacing="10">
+                    <Image Source="number.png" WidthRequest="20" HeightRequest="20"/>
+                    <Label Text="Contact Number" TextColor="Black" FontFamily="PoppinsRegular"/>
+                </HorizontalStackLayout>
+
+                <Border
+                    Stroke="#E0E0E0"
+                    BackgroundColor="white"
+                    StrokeThickness="1"
+                    MaximumWidthRequest="400"
+                    HorizontalOptions="FillAndExpand"
+                    StrokeShape="RoundRectangle 10"
+                    Padding="10, 5">
+                    <Border.Shadow>
+                        <Shadow Brush="gray" Offset="0,4" Radius="10" Opacity="2"/>
+                    </Border.Shadow>
+                    <Entry x:Name="ContactEntry"
+                        Placeholder="e.g. +63 912 345 6789"
+                        TextColor="Black"
+                        Keyboard="Telephone"
+                        FontFamily="PoppinsRegular"
+                        MaxLength="13"/>
+                </Border>
+
+                <!-- ── Incident Type ── -->
+                <HorizontalStackLayout Spacing="10">
+                    <Image Source="alert.png" WidthRequest="20" HeightRequest="20"/>
+                    <Label Text="Incident Type" TextColor="Black" FontFamily="PoppinsRegular"/>
+                    <Label Text="*" TextColor="DarkRed" FontFamily="PoppinsRegular"/>
+                </HorizontalStackLayout>
+
+                <FlexLayout Wrap="Wrap" JustifyContent="Start" AlignItems="Start" HorizontalOptions="Center">
+
+                    <!-- Medical Emergency -->
+                    <Border x:Name="ChipMedical"
+                            Stroke="white" StrokeThickness="3"
+                            StrokeShape="RoundRectangle 10"
+                            Padding="10,8" BackgroundColor="lightgray"
+                            FlexLayout.Basis="48%" FlexLayout.Grow="1">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnIncidentTypeSelected" CommandParameter="Medical Emergency"/>
+                        </Border.GestureRecognizers>
+                        <Label x:Name="LabelMedical" Text="🚑 Medical Emergency"
+                           TextColor="#424242" FontSize="13" FontFamily="PoppinsRegular"/>
+                    </Border>
+
+                    <!-- Fight / Violence -->
+                    <Border x:Name="ChipFight"
+                        Stroke="white" StrokeThickness="3"
+                        StrokeShape="RoundRectangle 10"
+                        Padding="10,8" BackgroundColor="lightgray" FlexLayout.Basis="48%" FlexLayout.Grow="1">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnIncidentTypeSelected" CommandParameter="Fight / Violence"/>
+                        </Border.GestureRecognizers>
+                        <Label x:Name="LabelFight" Text="⚠️ Fight / Violence"
+                           TextColor="#424242" FontSize="13" FontFamily="PoppinsRegular"/>
+                    </Border>
+
+                    <!-- Fire -->
+                    <Border x:Name="ChipFire"
+                        Stroke="white" StrokeThickness="3"
+                        StrokeShape="RoundRectangle 10"
+                        Padding="10,8" BackgroundColor="lightgray" FlexLayout.Basis="48%" FlexLayout.Grow="1">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnIncidentTypeSelected" CommandParameter="Fire"/>
+                        </Border.GestureRecognizers>
+                        <Label x:Name="LabelFire" Text="🔥 Fire"
+                           TextColor="#424242" FontSize="13" FontFamily="PoppinsRegular"/>
+                    </Border>
+
+                    <!-- Flood / Disaster -->
+                    <Border x:Name="ChipDisaster"
+                        Stroke="white" StrokeThickness="3"
+                        StrokeShape="RoundRectangle 10"
+                        Padding="10,8" BackgroundColor="lightgray" FlexLayout.Basis="48%" FlexLayout.Grow="1">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnIncidentTypeSelected" CommandParameter="Flood / Disaster"/>
+                        </Border.GestureRecognizers>
+                        <Label x:Name="LabelDisaster" Text="🌊 Flood / Disaster"
+                           TextColor="#424242" FontSize="13" FontFamily="PoppinsRegular"/>
+                    </Border>
+
+                    <!-- Weapon Threat -->
+                    <Border x:Name="ChipWeapon"
+                        Stroke="white" StrokeThickness="3"
+                        StrokeShape="RoundRectangle 10"
+                        Padding="10,8" BackgroundColor="lightgray" FlexLayout.Basis="10%" FlexLayout.Grow=".5">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnIncidentTypeSelected" CommandParameter="Weapon Threat"/>
+                        </Border.GestureRecognizers>
+                        <Label x:Name="LabelWeapon" Text="🔪 Weapon Threat"
+                           TextColor="#424242" FontSize="13" FontFamily="PoppinsRegular"/>
+                    </Border>
+
+                    <!-- Other -->
+                    <Border x:Name="ChipOther"
+                        Stroke="white" StrokeThickness="3"
+                        StrokeShape="RoundRectangle 10"
+                        Padding="10,8" BackgroundColor="lightgray" FlexLayout.Basis="10%" FlexLayout.Grow=".5">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnIncidentTypeSelected" CommandParameter="Other"/>
+                        </Border.GestureRecognizers>
+                        <Label x:Name="LabelOther" Text="❓ Other"
+                           TextColor="#424242" FontSize="13" FontFamily="PoppinsRegular"
+                               HorizontalOptions="Fill" VerticalOptions="Fill" HorizontalTextAlignment="Center"/>
+                    </Border>
+
+                </FlexLayout>
+
+                <!-- ── Describe Further ── -->
+                <HorizontalStackLayout Spacing="10">
+                    <Label Text="📝" FontSize="14" VerticalOptions="Center"/>
+                    <Label Text="Describe Further" TextColor="Black" FontSize="13" FontFamily="PoppinsRegular" VerticalOptions="Center"/>
+                    <Label Text="(Optional)" TextColor="Gray" FontSize="12" VerticalOptions="Center"/>
+                </HorizontalStackLayout>
+
+                <Border
+                    Stroke="#E0E0E0"
+                    StrokeThickness="1"
+                    BackgroundColor="white"
+                    MaximumWidthRequest="450"
+                    StrokeShape="RoundRectangle 10"
+                    Padding="10, 5, 10, 5">
+                    <Border.Shadow>
+                        <Shadow Brush="gray" Offset="0,4" Radius="10" Opacity="2"/>
+                    </Border.Shadow>
+                    <Editor x:Name="SpecificIncidentEntry"
+                        Placeholder="e.g. Student collapsed near the library, smoke from Room 301…"
+                        PlaceholderColor="#BDBDBD"
+                        TextColor="Black"
+                        AutoSize="TextChanges"
+                        FontFamily="PoppinsRegular"
+                        MinimumHeightRequest="65"/>
+                </Border>
+
+                <!--location type-->
+                <HorizontalStackLayout Spacing="10">
+                    <Image Source="location.png" WidthRequest="20" HeightRequest="20"/>
+                    <Label Text="Location Type" TextColor="Black" FontFamily="PoppinsRegular"/>
+                </HorizontalStackLayout>
+
+                <HorizontalStackLayout Spacing="10" HorizontalOptions="Center" VerticalOptions="Center">
+                    <Border
+                        Stroke="#E0E0E0" StrokeThickness="1"
+                        StrokeShape="RoundRectangle 10" Padding="0"
+                        WidthRequest="160" HeightRequest="160">
+                        <VerticalStackLayout Spacing="5" HorizontalOptions="Center" VerticalOptions="Center">
+                            <ImageButton x:Name="SchoolImage"
+                                 Source="school_unclicked.png"
+                                 HeightRequest="100" WidthRequest="150"
+                                 Clicked="school_clicked"/>
+                            <Label Text="School" TextColor="Black" HorizontalOptions="Center" FontFamily="PoppinsRegular"/>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Border
+                        Stroke="#E0E0E0" StrokeThickness="1"
+                        StrokeShape="RoundRectangle 10" Padding="5"
+                        WidthRequest="160" HeightRequest="160">
+                        <VerticalStackLayout Spacing="5" HorizontalOptions="Center" VerticalOptions="Center">
+                            <ImageButton x:Name="CourtImage"
+                             Source="court_unclicked.png"
+                             HeightRequest="100" WidthRequest="150"
+                             Clicked="court_clicked"/>
+                            <Label Text="Court" TextColor="Black" HorizontalOptions="Center" FontFamily="PoppinsRegular"/>
+                        </VerticalStackLayout>
+                    </Border>
+                </HorizontalStackLayout>
+
+                <!-- ── Court Position (shown only when Court is selected) ── -->
+                <VerticalStackLayout x:Name="CourtPositionContainer" IsVisible="False" Spacing="8">
+
+                    <HorizontalStackLayout Spacing="10" Margin="0,5,0,0">
+                        <Label Text="🏀" FontSize="16" VerticalOptions="Center"/>
+                        <Label Text="Court Position" TextColor="Black" FontAttributes="Bold"/>
+                        <Label Text="*" TextColor="DarkRed" FontAttributes="Bold"/>
+                    </HorizontalStackLayout>
+
+                    <FlexLayout Wrap="Wrap" JustifyContent="Start" AlignItems="Start">
+
+                        <Border x:Name="ChipInsideCourtA"
+                            Stroke="#E0E0E0" StrokeThickness="1.5"
+                            StrokeShape="RoundRectangle 20" Padding="12,8" BackgroundColor="#F5F5F5">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnCourtPositionSelected" CommandParameter="Inside Court A"/>
+                            </Border.GestureRecognizers>
+                            <Label x:Name="LabelInsideCourtA" Text="🏟️ Inside Court A" TextColor="#424242" FontSize="13"/>
+                        </Border>
+
+                        <Border x:Name="ChipInsideCourtB"
+                            Stroke="#E0E0E0" StrokeThickness="1.5"
+                            StrokeShape="RoundRectangle 20" Padding="12,8" BackgroundColor="#F5F5F5">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnCourtPositionSelected" CommandParameter="Inside Court B"/>
+                            </Border.GestureRecognizers>
+                            <Label x:Name="LabelInsideCourtB" Text="🏟️ Inside Court B" TextColor="#424242" FontSize="13"/>
+                        </Border>
+
+                        <Border x:Name="ChipInsideCourt"
+                            Stroke="#E0E0E0" StrokeThickness="1.5"
+                            StrokeShape="RoundRectangle 20" Padding="12,8" BackgroundColor="#F5F5F5">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnCourtPositionSelected" CommandParameter="Inside Court"/>
+                            </Border.GestureRecognizers>
+                            <Label x:Name="LabelInsideCourt" Text="🏀 Inside Court" TextColor="#424242" FontSize="13"/>
+                        </Border>
+
+                        <Border x:Name="ChipBehindCourt"
+                            Stroke="#E0E0E0" StrokeThickness="1.5"
+                            StrokeShape="RoundRectangle 20" Padding="12,8" BackgroundColor="#F5F5F5">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnCourtPositionSelected" CommandParameter="Behind the Court"/>
+                            </Border.GestureRecognizers>
+                            <Label x:Name="LabelBehindCourt" Text="🔙 Behind the Court" TextColor="#424242" FontSize="13"/>
+                        </Border>
+
+                        <Border x:Name="ChipCourtEntrance"
+                            Stroke="#E0E0E0" StrokeThickness="1.5"
+                            StrokeShape="RoundRectangle 20" Padding="12,8" BackgroundColor="#F5F5F5">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnCourtPositionSelected" CommandParameter="Near Entrance"/>
+                            </Border.GestureRecognizers>
+                            <Label x:Name="LabelCourtEntrance" Text="🚪 Near Entrance" TextColor="#424242" FontSize="13"/>
+                        </Border>
+
+                    </FlexLayout>
+
+                </VerticalStackLayout>
+
+                <!-- ── Building Selector (shown when School is selected) ── -->
+                <VerticalStackLayout x:Name="BuildingContainer" IsVisible="False">
+                    <HorizontalStackLayout Spacing="10" Margin="0,5,0,0">
+                        <Label Text="🏢" FontSize="16" VerticalOptions="Center"/>
+                        <Label Text="Building" TextColor="Black" FontFamily="PoppinsRegular" VerticalOptions="Center"/>
+                        <Label Text="*" TextColor="DarkRed" FontFamily="PoppinsRegular" VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+                    <Border
+                        Margin="0,5,0,0"
+                        Stroke="#E0E0E0"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 10"
+                        Padding="5">
+                        <Picker x:Name="BuildingPicker" TextColor="Black" Title="Select Building">
+                            <Picker.Items>
+                                <x:String>Building A</x:String>
+                                <x:String>Building B</x:String>
+                                <x:String>Building C</x:String>
+                                <x:String>Building D</x:String>
+                            </Picker.Items>
+                        </Picker>
+                    </Border>
+                </VerticalStackLayout>
+
+                <!--floor-->
+                <VerticalStackLayout x:Name="FloorContainer" IsVisible="False">
+                    <HorizontalStackLayout Spacing="10" Margin="0,5,0,0">
+                        <Label Text="🪜" FontSize="16" VerticalOptions="Center"/>
+                        <Label Text="Floor" TextColor="Black" FontFamily="PoppinsRegular" VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+                    <Border
+                        Margin="0,5,0,0"
+                        Stroke="#E0E0E0"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 10"
+                        Padding="5">
+                        <Picker x:Name="FloorPicker" TextColor="Black" Title="Select Floor">
+                            <Picker.Items>
+                                <x:String>1st Floor</x:String>
+                                <x:String>2nd Floor</x:String>
+                                <x:String>3rd Floor</x:String>
+                                <x:String>4th Floor</x:String>
+                            </Picker.Items>
+                        </Picker>
+                    </Border>
+                </VerticalStackLayout>
+
+                <!--SPECIFIC LOCATION -->
+                <Label Text="Specific Location (Optional)" TextColor="Black"/>
+
+                <Border
+                    Margin="0,5,0,0"
+                    Stroke="#E0E0E0"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 10"
+                    Padding="5">
+                    <Entry x:Name="SpecificLocationEntry"
+                       Placeholder="e.g. Room 201, Cafeteria, Restroom"
+                       TextColor="Black"/>
+                </Border>
+
+                <!-- ── Share My Current Location ── -->
+                <Button x:Name="ShareLocationButton"
+                    Text="Share My Current Location"
+                    BackgroundColor="#1565C0"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    CornerRadius="10"
+                    HeightRequest="48"
+                    Clicked="share_location_clicked">
+                    <Button.Shadow>
+                        <Shadow Brush="blue" Opacity="0.4" Radius="10" Offset="5,5"/>
+                    </Button.Shadow>
+                </Button>
+
+                <Border x:Name="GpsBorder"
+                    IsVisible="False"
+                    Stroke="#C8E6C9"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 8"
+                    Padding="10"
+                    BackgroundColor="#F1F8E9">
+                    <HorizontalStackLayout Spacing="8">
+                        <Label Text="✅" FontSize="14" VerticalOptions="Center"/>
+                        <Label x:Name="SharedLocationLabel"
+                           TextColor="#2E7D32" FontSize="12"
+                           VerticalOptions="Center"
+                           LineBreakMode="WordWrap"
+                           HorizontalOptions="FillAndExpand"/>
+                    </HorizontalStackLayout>
+                </Border>
+
+                <!-- Priority Toggle -->
+                <Border x:Name="PriorityBorder"
+                    Stroke="#FFCCBC" StrokeThickness="1.5"
+                    StrokeShape="RoundRectangle 10"
+                    Padding="15,12" BackgroundColor="#FFF3E0">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout Grid.Column="0" Spacing="3">
+                            <Label x:Name="PriorityTitleLabel"
+                               Text="🔕  Low Priority"
+                               TextColor="#757575" FontAttributes="Bold" FontSize="14"/>
+                            <Label x:Name="PrioritySubLabel"
+                               Text="Toggle ON to alert admin immediately"
+                               TextColor="#9E9E9E" FontSize="11"/>
+                        </VerticalStackLayout>
+                        <Switch x:Name="PrioritySwitch"
+                            Grid.Column="1"
+                            OnColor="#E53935"
+                            ThumbColor="White"
+                            IsToggled="False"
+                            Toggled="OnPriorityToggled"
+                            VerticalOptions="Center"/>
+                    </Grid>
+                </Border>
+
+                <!-- ── Incident Photo (Required) ── -->
+                <HorizontalStackLayout Spacing="10" Margin="0,4,0,0">
+                    <Label Text="📷" FontSize="16" VerticalOptions="Center"/>
+                    <Label Text="Incident Photo" TextColor="Black" FontFamily="PoppinsRegular" VerticalOptions="Center"/>
+                    <Label Text="*" TextColor="DarkRed" FontFamily="PoppinsRegular" VerticalOptions="Center"/>
+                </HorizontalStackLayout>
+
+                <!-- Photo preview card (hidden until a photo is selected) -->
+                <Grid x:Name="PhotoPreviewContainer" IsVisible="False">
+                    <Border StrokeShape="RoundRectangle 10"
+                            StrokeThickness="1"
+                            Stroke="#E0E0E0">
+                        <Image x:Name="PhotoPreviewImage"
+                               Aspect="AspectFill"
+                               HeightRequest="180"/>
+                    </Border>
+                    <!-- Remove photo (X) button pinned top-right -->
+                    <Button Text="✕"
+                            BackgroundColor="#D90000"
+                            TextColor="White"
+                            FontAttributes="Bold"
+                            FontSize="13"
+                            CornerRadius="16"
+                            WidthRequest="32"
+                            HeightRequest="32"
+                            Padding="0"
+                            HorizontalOptions="End"
+                            VerticalOptions="Start"
+                            Margin="0,6,6,0"
+                            Clicked="OnRemovePhotoClicked"/>
+                </Grid>
+
+                <Button x:Name="AttachPhotoButton"
+                    Text="📷  Take / Attach Photo"
+                    BackgroundColor="#455A64"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    CornerRadius="10"
+                    HeightRequest="48"
+                    Clicked="OnAttachPhotoClicked">
+                    <Button.Shadow>
+                        <Shadow Brush="#455A64" Opacity="0.3" Radius="8" Offset="4,4"/>
+                    </Button.Shadow>
+                </Button>
+
+                <!-- Send Button -->
+                <Button Text="Send Emergency Report"
+                    BackgroundColor="DarkRed"
+                    Clicked="send_clicked"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    CornerRadius="10"
+                    HeightRequest="50">
+                    <Button.Shadow>
+                        <Shadow Brush="#ab0404" Opacity="0.4" Radius="10" Offset="5,5"/>
+                    </Button.Shadow>
+                </Button>
+
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

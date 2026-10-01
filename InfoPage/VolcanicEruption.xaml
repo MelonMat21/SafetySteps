@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SAFETY_STEPS.InfoPage.VolcanicEruption"
+             BackgroundColor="White"
+             Title="VolcanicEruption">
+    
+    <ScrollView>
+
+        <VerticalStackLayout Padding="20" Spacing="15">
+
+            <HorizontalStackLayout Spacing="10">
+
+                <ImageButton 
+            Source="back.png"
+            HeightRequest="10"
+            WidthRequest="10"
+            VerticalOptions="Start"/>
+
+                <Label
+            Text="Volcanic Eruption"
+            TextColor="Black"
+            FontSize="20"
+            FontAttributes="Bold"
+            VerticalOptions="Center"/>
+
+            </HorizontalStackLayout>
+
+            <BoxView
+            HeightRequest="1"
+            BackgroundColor="grey"
+            HorizontalOptions="Fill"/>
+
+            <Image
+            Source="volcanic_eruption.png"/>
+
+        </VerticalStackLayout>
+
+    </ScrollView>
+
+</ContentPage>

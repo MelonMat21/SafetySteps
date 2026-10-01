@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             x:Class="SAFETY_STEPS.LoginPage" 
+             Title="LoginPage" 
+             BackgroundColor="#ab0404">
+    
+    <ScrollView>
+        <VerticalStackLayout Spacing="25">
+            <VerticalStackLayout HeightRequest="220" BackgroundColor="#ab0404" VerticalOptions="Center" HorizontalOptions="Center" Spacing="8" Padding="0,40,0,0">
+                <Border 
+                    Stroke="#ab0404" 
+                    StrokeThickness="2" 
+                    BackgroundColor="White" 
+                    StrokeShape="RoundRectangle 50" 
+                    HeightRequest="100" 
+                    WidthRequest="100" 
+                    Padding="10" 
+                    HorizontalOptions="Center">
+                    
+                    <Image Source="safetystepslogo.png" Aspect="AspectFit"/>
+                </Border>
+                
+                <Label Text="SafetySteps" FontFamily="PoppinsBold" FontSize="30" FontAttributes="Bold" TextColor="White" HorizontalOptions="Center"/>
+                <Label Text="Emergency Alert System" FontFamily="PoppinsSemiBold" FontSize="16" TextColor="White" HorizontalOptions="Center"/>
+                
+            </VerticalStackLayout>
+            
+            <Border 
+                Background="White" 
+                StrokeThickness="0" 
+                StrokeShape="RoundRectangle 0,70,0,0">
+                
+                <VerticalStackLayout Padding="30" Spacing="5">
+                    
+                    <Label Text="Welcome Back!" FontFamily="PoppinsBold" FontSize="22" FontAttributes="Bold" TextColor="Black" HorizontalOptions="Center"/>
+                    <Label Text="LOG IN TO CONTINUE TO SAFETYSTEPS" FontFamily="PoppinsRegular" FontSize="12" FontAttributes="Bold" TextColor="Gray" HorizontalOptions="Center" Margin="0, 0, 0, 10"/>
+                    <Label Text="ID NUMBER" FontFamily="PoppinsRegular" FontSize="13" TextColor="Black"/>
+                    
+                    <!-- id number entry -->
+                    <Border Stroke="#D1D5DB" StrokeShape="RoundRectangle 12" StrokeThickness="1" BackgroundColor="#FFFFFF" Padding="0" HorizontalOptions="FillAndExpand">
+                        <Border.Shadow>
+                            <Shadow Brush="#000000" Opacity="0.4" Offset="0,2" Radius="6"/>
+                        </Border.Shadow>
+                        <Grid ColumnDefinitions="Auto,*" Padding="15,8">
+                            <Image Source="id.png" HeightRequest="20" WidthRequest="20" VerticalOptions="Center"/>
+                            <Entry Grid.Column="1" x:Name="StudentIDEntry" Keyboard="Numeric" Placeholder="Enter your Student ID" MaxLength="11" FontFamily="PoppinsRegular" BackgroundColor="Transparent" TextColor="Black" VerticalOptions="Center" ClearButtonVisibility="WhileEditing"/>
+                        </Grid>
+                    </Border>
+                    
+                    <Label Text="Student ID, Teacher ID, or Personnel ID" FontSize="12" TextColor="Gray"/>
+                    <Label Text="PASSWORD" FontFamily="PoppinsRegular"  FontSize="12" TextColor="Black" Margin="0, 5, 0, 0"/>
+                    
+                    <!-- password entry -->
+                    <Border Stroke="#D1D5DB" StrokeShape="RoundRectangle 12" StrokeThickness="1" BackgroundColor="#FFFFFF" Padding="0" HorizontalOptions="FillAndExpand">
+                        <Border.Shadow>
+                            <Shadow Brush="#000000" Opacity="0.4" Offset="0,2" Radius="6"/>
+                        </Border.Shadow>
+                        <Grid ColumnDefinitions="Auto,*" Padding="15,8">
+                            <Image Source="password.png" HeightRequest="20" WidthRequest="20" VerticalOptions="Center"/>
+                            <Entry Grid.Column="1" x:Name="PasswordEntry" IsPassword="True" Placeholder="Enter your password" FontFamily="PoppinsRegular"  MaxLength="20" BackgroundColor="Transparent" TextColor="Black" VerticalOptions="Center" ClearButtonVisibility="WhileEditing"/>
+          
+                        </Grid>
+                    </Border>
+                    
+                    <!-- log In button with Clicked handler -->
+                    <Button Text="Log in" Clicked="OnSignInClicked" BackgroundColor="#ab0404" TextColor="White" BorderColor="Blue" FontAttributes="Bold" CornerRadius="10" HeightRequest="50" Margin="0,20,0,20"  FontFamily="PoppinsSemiBold" >
+                        <Button.Shadow>
+                            <Shadow Brush="#ab0404" Opacity="0.4" Radius="10" Offset="5,5" />
+                        </Button.Shadow>
+                    </Button>
+
+                    <!--forgot password-->
+                    <Label 
+                        Text="Forgot Password?" 
+                        FontSize="12" 
+                        TextColor="#ab0404" 
+                        HorizontalOptions="Center" 
+                        FontFamily="PoppinsRegular" />
+                    
+                    <Label Text="---------------------------------------- OR ----------------------------------------" TextColor="Gray" HorizontalOptions="Center" FontSize="10"/>
+                    <Label HorizontalOptions="Center">
+                        
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="Don't have an account? " TextColor="Gray" FontSize="12" FontFamily="PoppinsRegular" />
+                                <Span Text="Sign Up" TextColor="#ab0404" FontSize="12" FontFamily="PoppinsRegular" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                    
+                    <!-- Create Account button with Clicked handler -->
+                    <Button 
+                        x:Name="CreateNewAccount"
+                        Text="Create New Account" 
+                        Clicked="OnCreateAccountClicked" 
+                        BackgroundColor="White" 
+                        TextColor="#ab0404"
+                        BorderColor="Gray" 
+                        BorderWidth="1" 
+                        CornerRadius="10" 
+                        HeightRequest="50" 
+                        Margin="0,20,0,0"
+                        FontFamily="PoppinsSemiBold">
+                        
+                        <Button.Shadow>
+                            <Shadow Brush="gray" Opacity="0.4" Offset="0,2" Radius="6"/>
+                        </Button.Shadow>
+                    </Button>
+                    
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

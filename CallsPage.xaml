@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SAFETY_STEPS.CallsPage"
+             BackgroundColor="White"
+             Title="Call Queue">
+
+    <ScrollView>
+        <VerticalStackLayout>
+            <Border Background="#ab0404" StrokeThickness="0">
+                <VerticalStackLayout
+                    HeightRequest="60"
+                    Background="#ab0404"
+                    VerticalOptions="Start"
+                    HorizontalOptions="Start"
+                    Spacing="8"
+                    Padding="10">
+                    <HorizontalStackLayout Spacing="0">
+                        <Label
+                            Text="Calls Queue"
+                            TextColor="White"
+                            FontSize="18"
+                            FontAttributes="Bold"
+                            Padding="10,8,0,0"/>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <VerticalStackLayout Padding="16" Spacing="12">
+                <Label Text="{Binding HeaderText}"
+                       FontAttributes="Bold" FontSize="20" TextColor="Black"/>
+
+                <Label Text="{Binding QueueSummaryText}"
+                       FontSize="13" TextColor="Gray"/>
+
+                <CollectionView ItemsSource="{Binding QueueItems}"
+                                EmptyView="No pending calls in queue.">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame CornerRadius="14" BorderColor="#dddddd"
+                                   Padding="14" Margin="0,0,0,10">
+                                <VerticalStackLayout Spacing="10">
+
+                                    <!-- Row 1: queue label + URGENT badge -->
+                                    <HorizontalStackLayout Spacing="8">
+                                        <Label Text="{Binding QueueLabel}"
+                                               FontAttributes="Bold" TextColor="Black"/>
+                                        <Label Text="URGENT"
+                                               IsVisible="{Binding IsUrgent}"
+                                               TextColor="White"
+                                               BackgroundColor="#d32f2f"
+                                               Padding="6,2" FontSize="12"/>
+                                    </HorizontalStackLayout>
+
+                                    <!-- Caller info row: photo + name/SN -->
+                                    <HorizontalStackLayout Spacing="14" VerticalOptions="Center">
+
+                                        <!-- Profile picture circle -->
+                                        <Border StrokeShape="Ellipse"
+                                                StrokeThickness="2"
+                                                Stroke="#ab0404"
+                                                WidthRequest="60"
+                                                HeightRequest="60">
+                                            <Image Source="{Binding ProfileImageSource}"
+                                                   Aspect="AspectFill"
+                                                   WidthRequest="60"
+                                                   HeightRequest="60"/>
+                                        </Border>
+
+                                        <VerticalStackLayout Spacing="4" VerticalOptions="Center">
+                                            <!-- Caller name with student number: "Mathew(02000388350)" -->
+                                            <Label Text="{Binding CallerDisplay}"
+                                                   FontSize="15" TextColor="Black"
+                                                   FontAttributes="Bold"/>
+
+                                            <!-- Wait time -->
+                                            <Label Text="{Binding WaitText}"
+                                                   FontSize="12" TextColor="#666666"/>
+                                        </VerticalStackLayout>
+                                    </HorizontalStackLayout>
+
+                                    <!-- Action buttons -->
+                                    <HorizontalStackLayout Spacing="8">
+                                        <Button Text="Accept"
+                                                Clicked="OnAcceptClicked"
+                                                CommandParameter="{Binding ChannelName}"
+                                                BackgroundColor="#00c853"
+                                                TextColor="White"
+                                                CornerRadius="8"
+                                                HeightRequest="40"/>
+                                        <Button Text="Reject"
+                                                Clicked="OnRejectClicked"
+                                                CommandParameter="{Binding ChannelName}"
+                                                BackgroundColor="#e53935"
+                                                TextColor="White"
+                                                CornerRadius="8"
+                                                HeightRequest="40"/>
+                                        <Button Text="👤 Profile"
+                                                Clicked="OnViewProfileClicked"
+                                                CommandParameter="{Binding CallerId}"
+                                                BackgroundColor="#1565C0"
+                                                TextColor="White"
+                                                CornerRadius="8"
+                                                HeightRequest="40"/>
+                                    </HorizontalStackLayout>
+
+                                </VerticalStackLayout>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

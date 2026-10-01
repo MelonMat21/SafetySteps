@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SAFETY_STEPS.HomePage"
+             Background="white"
+             Title="HomePage">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="0">
+
+            <!-- ─── Header Banner ─── -->
+            <Border Background="#ab0404" StrokeThickness="0" StrokeShape="RoundRectangle 0,0,40,40">
+                <Border.Shadow>
+                    <Shadow Brush="#ab0404" Opacity="0.8" Offset="0,3" Radius="6"/>
+                </Border.Shadow>
+
+                <VerticalStackLayout
+                    BackgroundColor="#ab0404"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill"
+                    Spacing="5"
+                    Padding="24,30,24,24">
+
+                    <Label Text="Welcome, " TextColor="White" FontSize="18" FontFamily="PoppinsRegular"/>
+
+                    <!-- populated by HomePage.xaml.cs with real studentID -->
+                    <Label x:Name="StudentIDLabel" Text="" TextColor="White" FontSize="20" FontFamily="PoppinsBold"/>
+
+                    <!-- populated by HomePage.xaml.cs with real role -->
+                    <Label x:Name="RoleLabel" Text="" TextColor="White" FontSize="15" FontFamily="PoppinsRegular"/>
+
+                    <!-- number of reports — fills the banner width -->
+                    <Border
+                        Background="White"
+                        Stroke="White"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 15"
+                        Padding="8"
+                        Margin="0,8,0,0"
+                        HorizontalOptions="Fill">
+
+                        <HorizontalStackLayout Spacing="15" HorizontalOptions="Start" VerticalOptions="Center" Padding="10,8">
+                            <Image Source="alert_gray.png" HeightRequest="20" WidthRequest="20" VerticalOptions="Center"/>
+                            <VerticalStackLayout Spacing="4" VerticalOptions="Center">
+                                <Label Text="Recent Reports" FontSize="12" TextColor="Black" FontFamily="PoppinsRegular"/>
+                                <Label x:Name="ReportCountLabel" Text="0" FontSize="15" TextColor="Black" FontAttributes="Bold" FontFamily="PoppinsRegular"/>
+                            </VerticalStackLayout>
+                        </HorizontalStackLayout>
+                    </Border>
+
+                </VerticalStackLayout>
+            </Border>
+
+
+            <!-- ─── Need Help Card ─── -->
+            <Border
+                Stroke="Gray"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 15"
+                Margin="20,20,20,35"
+                Padding="0"
+                HorizontalOptions="Fill">
+
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Need Help?" TextColor="Black" FontFamily="PoppinsBold"
+                           FontSize="18" HorizontalOptions="Center" Padding="0,20,0,0"/>
+                    <Label Text="Press the button below to send an emergency alert"
+                           TextColor="Gray" FontSize="12"
+                           HorizontalOptions="Center" HorizontalTextAlignment="Center"
+                           Padding="24,0,24,5" FontFamily="PoppinsRegular"/>
+
+                    <!-- Emergency Alert button — stretches to card width -->
+                    <Border
+                        BackgroundColor="#ab0404"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 15"
+                        HeightRequest="70"
+                        HorizontalOptions="Fill"
+                        Margin="16,0,16,16">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnEmergencyAlertTapped"/>
+                        </Border.GestureRecognizers>
+
+                        <HorizontalStackLayout Spacing="16" HorizontalOptions="Center" VerticalOptions="Center">
+                            <Image Source="alert_gray.png" WidthRequest="28" HeightRequest="28" VerticalOptions="Center"/>
+                            <Label Text="EMERGENCY ALERT" FontAttributes="Bold" FontSize="16"
+                                   TextColor="White" VerticalOptions="Center" FontFamily="PoppinsBold"/>
+                        </HorizontalStackLayout>
+                    </Border>
+                </VerticalStackLayout>
+            </Border>
+
+
+            <!-- ─── Quick Call header ─── -->
+            <HorizontalStackLayout Spacing="8" Padding="20,-10,0,10">
+                <Image Source="number_red.png" HeightRequest="20" WidthRequest="28" VerticalOptions="Center"/>
+                <Label Text="Quick Call" TextColor="Black" FontAttributes="Bold"
+                       FontSize="18" FontFamily="PoppinsSemiBold" VerticalOptions="Center"/>
+            </HorizontalStackLayout>
+
+            <!-- Quick Call chips — horizontal scroll so they never wrap awkwardly -->
+            <ScrollView Orientation="Horizontal" Margin="12,0" HorizontalScrollBarVisibility="Never">
+                <HorizontalStackLayout Spacing="8" Margin="8,0,8,8">
+
+                    <Border
+                        x:Name="AdminCallButton"
+                        Background="#ab0404"
+                        Stroke="#ab0404"
+                        StrokeThickness="1"
+                        HeightRequest="42"
+                        StrokeShape="RoundRectangle 15"
+                        Padding="16,0">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnAdminCallTapped"/>
+                        </Border.GestureRecognizers>
+                        <Label Text="📞 Admin" FontSize="13" TextColor="White"
+                               FontAttributes="Bold" FontFamily="PoppinsRegular"
+                               VerticalOptions="Center"/>
+                    </Border>
+
+                    <!-- Guidance -->
+                    <Border Background="Transparent" Stroke="Gray" StrokeThickness="1"
+                            HeightRequest="42" StrokeShape="RoundRectangle 15" Padding="16,0">
+                        <Label Text="Guidance" FontSize="13" TextColor="Black"
+                               FontFamily="PoppinsRegular" VerticalOptions="Center"/>
+                    </Border>
+
+                    <!-- Principal -->
+                    <Border Background="Transparent" Stroke="Gray" StrokeThickness="1"
+                            HeightRequest="42" StrokeShape="RoundRectangle 15" Padding="16,0">
+                        <Label Text="Principal" FontSize="13" TextColor="Black"
+                               FontFamily="PoppinsRegular" VerticalOptions="Center"/>
+                    </Border>
+
+                    <!-- Nurse -->
+                    <Border Background="Transparent" Stroke="Gray" StrokeThickness="1"
+                            HeightRequest="42" StrokeShape="RoundRectangle 15" Padding="16,0">
+                        <Label Text="Nurse" FontSize="13" TextColor="Black"
+                               FontFamily="PoppinsRegular" VerticalOptions="Center"/>
+                    </Border>
+
+                    <!-- Security Officer -->
+                    <Border Background="Transparent" Stroke="Gray" StrokeThickness="1"
+                            HeightRequest="42" StrokeShape="RoundRectangle 15" Padding="16,0">
+                        <Label Text="Security Officer" FontSize="13" TextColor="Black"
+                               FontFamily="PoppinsRegular" VerticalOptions="Center"/>
+                    </Border>
+
+                </HorizontalStackLayout>
+            </ScrollView>
+
+
+            <!-- ─── Quick Actions header ─── -->
+            <HorizontalStackLayout Spacing="8" Padding="20,10,0,8">
+                <Image Source="quick.png" HeightRequest="20" WidthRequest="28" VerticalOptions="Center"/>
+                <Label Text="Quick Actions" TextColor="Black" FontSize="18"
+                       FontFamily="PoppinsSemiBold" VerticalOptions="Center"/>
+            </HorizontalStackLayout>
+
+            <!-- Action cards — fill available width with a consistent margin -->
+            <VerticalStackLayout HorizontalOptions="Fill" Padding="16,0,16,20" Spacing="10">
+
+                <Border Background="Transparent" Stroke="Gray" StrokeThickness="1"
+                        HeightRequest="64" HorizontalOptions="Fill" StrokeShape="RoundRectangle 15">
+                    <HorizontalStackLayout Spacing="16" HorizontalOptions="Start"
+                                           VerticalOptions="Center" Padding="14,0">
+                        <Image Source="alert_red.png" HeightRequest="22" WidthRequest="22"
+                               VerticalOptions="Center"/>
+                        <VerticalStackLayout Spacing="0" VerticalOptions="Center">
+                            <Label Text="View Report History" FontSize="13" TextColor="Black"
+                                   FontFamily="PoppinsRegular"/>
+                            <Label Text="0" FontSize="14" TextColor="Gray"
+                                   FontAttributes="Bold"/>
+                        </VerticalStackLayout>
+                    </HorizontalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

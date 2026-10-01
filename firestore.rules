@@ -1,0 +1,54 @@
+rules_version = '2';
+
+// Deploy: Firebase Console → Firestore → Rules → paste → Publish
+// Or: firebase deploy --only firestore:rules (with Firebase CLI in this folder)
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Call signaling (CallSignalingService polls with runQuery on "calls") ──
+    // Queries use: receiverId + status, receiverUid + status (incoming for admin).
+    // Single-doc GET uses document id = channelName (caller + receiver poll status).
+    match /calls/{callId} {
+      allow read: if request.auth != null && (
+        resource.data.callerId == request.auth.uid ||
+        resource.data.receiverId == request.auth.uid ||
+        resource.data.receiverUid == request.auth.uid
+      );
+
+      allow create: if request.auth != null
+        && request.resource.data.callerId == request.auth.uid;
+
+      allow update: if request.auth != null && (
+        resource.data.callerId == request.auth.uid ||
+        resource.data.receiverId == request.auth.uid ||
+        resource.data.receiverUid == request.auth.uid
+      );
+
+      allow delete: if false;
+    }
+
+    // ── User profiles (adjust if you want stricter privacy) ──
+    // CallViewModel reads another user's doc to get fcmToken — requires read access
+    // for authenticated peers OR move FCM to Cloud Functions only.
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow update: if request.auth != null && request.auth.uid == userId;
+      allow delete: if false;
+    }
+
+    // ── Emergency / alerts (AlertPage, ReportHistoryAdmin, ReportDetailSheet) ──
+    match /emergency_reports/{docId} {
+      allow read, create, update, delete: if request.auth != null;
+    }
+
+    match /admin_alerts/{docId} {
+      allow read, create, update: if request.auth != null;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SAFETY_STEPS.SignupPage"
+             Title="SignupPage"
+             BackgroundColor="#ab0404">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="30">
+
+            <VerticalStackLayout
+                HeightRequest="220"
+                BackgroundColor="#ab0404"
+                VerticalOptions="Center"
+                HorizontalOptions="Center"
+                Spacing="10"
+                Padding="0,20,0,0">
+
+                <Border 
+                    Background="White"
+                    HeightRequest="80"
+                    WidthRequest="80"
+                    StrokeShape="RoundRectangle 50"
+                    Padding="10"
+                    HorizontalOptions="Center">
+
+                    <Image Source="safetystepslogo.png" Aspect="AspectFit"/>
+                </Border>
+                <VerticalStackLayout Spacing="3">
+                    <Label Text="SafetySteps" FontFamily="PoppinsBold" FontSize="30" FontAttributes="Bold" TextColor="White" HorizontalOptions="Center"/>
+                <Label Text="Emergency Alert System" FontFamily="PoppinsSemiBold" FontSize="16" TextColor="White" HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+                </VerticalStackLayout>
+
+     
+            <Border Background="White" StrokeThickness="0" StrokeShape="RoundRectangle 110,0,0,0" Margin="0,-40,0,0">
+
+                <VerticalStackLayout Padding="30" Spacing="10">
+
+                    <!-- create account on top -->
+                    <Label Text="Create Account" TextColor="Black" FontAttributes="Bold" FontSize="20" HorizontalOptions="Center" FontFamily="PoppinsBold"/>
+                    <Label Text="I am a:" TextColor="Black" FontSize="12" FontFamily="PoppinsRegular"/>
+
+                    <!-- roles -->
+                    <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+
+                        <!-- Student role -->
+                        <Border 
+                            x:Name="StudentBorder"
+                            Background="Transparent"
+                            Stroke="Gray"
+                            StrokeThickness="1"
+                            HeightRequest="100"
+                            WidthRequest="90"
+                            HorizontalOptions="FillAndExpand"
+                            StrokeShape="RoundRectangle 15"
+                            Padding="10">
+
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnRoleTapped" CommandParameter="Student"/>
+                            </Border.GestureRecognizers>
+
+                            <VerticalStackLayout Spacing="5" HorizontalOptions="Center" VerticalOptions="Center">
+                                <Image Source="role.png" HeightRequest="50" WidthRequest="50" HorizontalOptions="Center"/>
+                                <Label Text="Student" FontSize="12" HorizontalOptions="Center" TextColor="Black" FontFamily="PoppinsRegular"/>
+                            </VerticalStackLayout>
+                        </Border>
+
+
+                        <!-- Teacher role -->
+                        <Border 
+                            x:Name="TeacherBorder"
+                            Background="Transparent"
+                            Stroke="Gray"
+                            StrokeThickness="1"
+                            HeightRequest="100"
+                            WidthRequest="90"
+                            HorizontalOptions="FillAndExpand"
+                            StrokeShape="RoundRectangle 15"
+                            Padding="10">
+
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnRoleTapped" CommandParameter="Teacher"/>
+                            </Border.GestureRecognizers>
+
+                            <VerticalStackLayout Spacing="5" HorizontalOptions="Center" VerticalOptions="Center">
+                                <Image Source="role.png" HeightRequest="50" WidthRequest="50" HorizontalOptions="Center"/>
+                                <Label Text="Teacher" FontSize="12" HorizontalOptions="Center" TextColor="Black" FontFamily="PoppinsRegular"/>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- Admin accounts are created by setting role = "admin" in the Firebase console. -->
+
+                    </HorizontalStackLayout>
+
+                    <!-- student number -->
+                    <Label Text="STUDENT NUMBER" FontSize="12" TextColor="Black"  FontFamily="PoppinsRegular"/>
+                    <Border 
+                        Stroke="#D1D5DB"                       
+                        StrokeShape="RoundRectangle 12"
+                        StrokeThickness="1"
+                        BackgroundColor="#FFFFFF"
+                        Padding="0"
+                        HorizontalOptions="FillAndExpand">
+
+                        <Border.Shadow>
+                            <Shadow 
+                                Brush="#000000"
+                                Opacity="0.4"
+                                Offset="0,2"
+                                Radius="6"/>
+                        </Border.Shadow>
+
+                        <Grid ColumnDefinitions="Auto,*" Padding="15,8">
+
+                            <Image 
+                                Source="id.png"
+                                HeightRequest="20"
+                                WidthRequest="20"
+                                VerticalOptions="Center"/>
+
+                            <Entry 
+                                Grid.Column="1"
+                                x:Name="RegisterStudentID"
+                                Keyboard="Numeric"
+                                Placeholder="Enter your Student ID"
+                                 FontFamily="PoppinsRegular"
+                                MaxLength="11"
+                                BackgroundColor="Transparent"
+                                TextColor="Black"
+                                VerticalOptions="Center"
+                                ClearButtonVisibility="WhileEditing"/>
+                        </Grid>
+                    </Border>
+                    
+
+                    <!-- password -->
+                    <Label Text="PASSWORD" FontSize="12" TextColor="Black" FontFamily="PoppinsRegular"/>
+                    <Border 
+                        Stroke="#D1D5DB"                       
+                        StrokeShape="RoundRectangle 12"
+                        StrokeThickness="1"
+                        BackgroundColor="#FFFFFF"
+                        Padding="0"
+                        HorizontalOptions="FillAndExpand">
+
+                        <Border.Shadow>
+                            <Shadow 
+                                Brush="#000000"
+                                Opacity="0.4"
+                                Offset="0,2"
+                                Radius="6"/>
+                        </Border.Shadow>
+
+                        <Grid ColumnDefinitions="Auto,*" Padding="15,8">
+
+                            <Image 
+                                Source="password.png"
+                                HeightRequest="20"
+                                WidthRequest="20"
+                                VerticalOptions="Center"/>
+
+                            <Entry 
+                                Grid.Column="1"
+                                x:Name="RegisterPassword"
+                                IsPassword="True"
+                                Placeholder="Enter your password"
+                                 FontFamily="PoppinsRegular"
+                                MaxLength="20"
+                                BackgroundColor="Transparent"
+                                TextColor="Black"
+                                VerticalOptions="Center"
+                                ClearButtonVisibility="WhileEditing"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- confirm password -->
+                    <Label Text="CONFIRM PASSWORD" FontSize="12" TextColor="Black" FontFamily="PoppinsRegular"/>
+                    <Border 
+                        Stroke="#D1D5DB"                       
+                        StrokeShape="RoundRectangle 12"
+                        StrokeThickness="1"
+                        BackgroundColor="#FFFFFF"
+                        Padding="0"
+                        HorizontalOptions="FillAndExpand">
+
+                        <Border.Shadow>
+                            <Shadow 
+                                Brush="#000000"
+                                Opacity="0.4"
+                                Offset="0,2"
+                                Radius="6"/>
+                        </Border.Shadow>
+
+                        <Grid ColumnDefinitions="Auto,*" Padding="15,8">
+
+                            <Image 
+                                Source="password.png"
+                                HeightRequest="20"
+                                WidthRequest="20"
+                                VerticalOptions="Center"/>
+
+                            <Entry 
+                                Grid.Column="1"
+                                x:Name="ConfirmPassword"
+                                IsPassword="True"
+                                Placeholder="Re-enter your password"
+                                 FontFamily="PoppinsRegular"
+                                MaxLength="20"
+                                BackgroundColor="Transparent"
+                                TextColor="Black"
+                                VerticalOptions="Center"
+                                ClearButtonVisibility="WhileEditing"/>
+                        </Grid>
+                    </Border>
+
+
+                    <!-- Create account button -->
+                    <Button Clicked="OnRegisterClicked" Text="Create Account" BackgroundColor="#ab0404" TextColor="White" FontAttributes="Bold" CornerRadius="10" HeightRequest="50" Margin="0,20,0,30"  FontFamily="PoppinsSemiBold">
+                        <Button.Shadow>
+                            <Shadow
+                                Brush="#ab0404"
+                                Opacity="0.4"
+                                Radius="10"
+                                Offset="5,5" />
+                        </Button.Shadow>
+                    </Button>
+
+                    <Label Text="----------------------------------------- OR -----------------------------------------" TextColor="Gray" HorizontalOptions="Center" FontSize="10"/>
+                    <Label Text="Already have an account?" FontSize="12" TextColor="Gray" HorizontalOptions="Center" FontFamily="PoppinsRegular"/>
+
+                    <!-- Back to Sign In button with Clicked handler -->
+                    <Button 
+                        x:Name="SignInBtn"
+                        Text="Sign In" 
+                        Clicked="OnSignInClicked"
+                        BackgroundColor="White" 
+                        TextColor="#ab0404" 
+                        BorderColor="Gray"
+                        BorderWidth="1" 
+                        FontFamily="PoppinsSemiBold"
+                        CornerRadius="10" 
+                        HeightRequest="50" 
+                        Margin="0,20,0,30">
+
+                        <Button.Shadow>
+                            <Shadow 
+                                Brush="gray"
+                                Opacity="0.4"
+                                Offset="0,2"
+                                Radius="6"/>
+                        </Button.Shadow>
+                    </Button>
+
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

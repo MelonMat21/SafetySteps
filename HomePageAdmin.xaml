@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SAFETY_STEPS.HomePageAdmin"
+             Background="white"
+             Padding="0">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="0">
+
+            <Border Background="#ab0404" StrokeThickness="0" StrokeShape="RoundRectangle 0,0,40,40" Margin="0,0,0,0">
+                <Border.Shadow>
+                    <Shadow Brush="#ab0404" Opacity="0.8" Offset="0,3" Radius="6"/>
+                </Border.Shadow>
+
+                <VerticalStackLayout            
+                    HeightRequest="250"
+                    BackgroundColor="#ab0404"
+                    VerticalOptions="Fill"
+                    HorizontalOptions="Fill"
+                    Spacing="8"
+                    Padding="30">
+
+                    <Label Text="Welcome, " TextColor="White" FontSize="18"/>
+                    <Label x:Name="AdminIDLabel" Text="" TextColor="White" FontAttributes="Bold" FontSize="20"/>
+                    <Label Text="Admin" TextColor="White" FontSize="15"/>
+
+
+                    <!-- reports -->
+                    <Border 
+                        Background="White"
+                        Stroke="White"
+                        StrokeThickness="1"
+                        HeightRequest="90"
+                        StrokeShape="RoundRectangle 15"
+                        Padding="10">
+
+                        <HorizontalStackLayout Spacing="10" Padding="10">
+                            <Image Source="alert.png" HeightRequest="20" WidthRequest="20"/>
+                            <VerticalStackLayout>
+                                <Label Text="Reports for the past 6 months"
+                                       FontSize="12"
+                                       TextColor="Black"/>
+                                <Label x:Name="HeaderReportCountLabel"
+                                       Text="0"
+                                       FontSize="16"
+                                       FontAttributes="Bold"
+                                       TextColor="Black"/>
+                            </VerticalStackLayout>
+                        </HorizontalStackLayout>
+                    </Border>
+
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Report updates -->
+            <Border 
+                Stroke="#E0E0E0"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 15"
+                Margin="20,20"
+                Padding="10">
+
+                <VerticalStackLayout Spacing="12">
+
+                    <Border Background="#ab0404"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 10"
+                        Padding="10">
+
+                        <Label
+                            Text="REPORT UPDATES"
+                            FontAttributes="Bold"
+                            FontSize="18"
+                            Padding="5"
+                            HeightRequest="40"
+                            HorizontalOptions="Center"
+                            TextColor="White"/>
+                        <Border.Shadow>
+                            <Shadow Brush="#ab0404" Opacity="0.4" Radius="10" Offset="5,5" />
+                        </Border.Shadow>
+                    </Border>
+
+
+                    <!-- Dynamic report rows injected from code-behind -->
+                    <VerticalStackLayout x:Name="RecentReportsStack" Spacing="8"/>
+
+                    <!-- Shown while loading / when there are no reports yet -->
+                    <Label x:Name="NoReportsLabel"
+                           Text="No recent reports."
+                           FontSize="12"
+                           TextColor="Gray"
+                           HorizontalOptions="Center"
+                           IsVisible="False"/>
+
+
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- QUICK ACTIOSN-->
+            <HorizontalStackLayout Margin="20,0,0,0">
+                <Image Source="quick.png" HeightRequest="20" WidthRequest="25"/>
+                <Label Text="Quick Actions"
+                       TextColor="Black"
+                       FontAttributes="Bold"
+                       FontSize="18"/>
+            </HorizontalStackLayout>
+
+
+            <VerticalStackLayout HorizontalOptions="Center" Padding="15" VerticalOptions="Center" Spacing="15">
+
+                <Border 
+                    Background="Transparent" 
+                    Stroke="gray" 
+                    StrokeThickness="1" 
+                    HeightRequest="60" 
+                    WidthRequest="300" 
+                    HorizontalOptions="Center" 
+                    StrokeShape="RoundRectangle 15">
+
+                    <HorizontalStackLayout 
+                        Spacing="20" 
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center" 
+                        Padding="15">
+                        <Image Source="alert_red.png" HeightRequest="20" WidthRequest="20" VerticalOptions="Start"/>
+
+                        <VerticalStackLayout Spacing="0">
+                            <Label Text="View Report History" FontSize="12" TextColor="black" HorizontalOptions="Center" VerticalOptions="Center"/>
+                            <Label x:Name="ReportHistoryCountLabel" Text="0" FontSize="15" TextColor="gray" FontAttributes="Bold" VerticalOptions="Start" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                    </HorizontalStackLayout>
+                </Border>
+
+                <!--calsls queue-->
+                <Border 
+                    Background="Transparent" 
+                    Stroke="gray" 
+                    StrokeThickness="1" 
+                    HeightRequest="60"
+                    WidthRequest="300" 
+                    HorizontalOptions="Center" 
+                    StrokeShape="RoundRectangle 15">
+
+                    <HorizontalStackLayout 
+                        Spacing="20" 
+                        HorizontalOptions="Start" 
+                        VerticalOptions="Center" 
+                        Padding="15">
+
+                        <Image Source="number_red.png" HeightRequest="20" WidthRequest="20" VerticalOptions="Start"/>
+                        <VerticalStackLayout HorizontalOptions="StartAndExpand">
+                            <Label Text="View Call Queue"
+                               FontSize="13"
+                               TextColor="Black"/>
+                            <Label x:Name="CallQueueCountLabel"
+                               Text="0"
+                               FontSize="15"
+                               FontAttributes="Bold"
+                               TextColor="Gray"/>
+                        </VerticalStackLayout>
+
+
+                        <Border BackgroundColor="#d32f2f"
+                            Padding="10,4"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 12"
+                            VerticalOptions="Center">
+
+                            <Label x:Name="UrgentCountLabel"
+                               Text="URGENT 0"
+                               FontSize="11"
+                               TextColor="White"
+                               FontAttributes="Bold"/>
+                        </Border>
+
+                    </HorizontalStackLayout>
+                </Border>
+
+
+
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

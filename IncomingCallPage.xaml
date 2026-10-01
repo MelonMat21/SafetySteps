@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SAFETY_STEPS.IncomingCallPage"
+             Title="Calls"
+             BackgroundColor="#0f0f1e">
+
+    <Grid RowDefinitions="*, Auto">
+
+        <!-- ── Main content ─────────────────────────────────────── -->
+        <VerticalStackLayout Grid.Row="0"
+                             VerticalOptions="Center"
+                             HorizontalOptions="Center"
+                             Spacing="20">
+
+            <!-- Caller avatar -->
+            <Border StrokeShape="RoundRectangle 60"
+                    WidthRequest="120" HeightRequest="120"
+                    BackgroundColor="#1e1e3f"
+                    HorizontalOptions="Center">
+                <Image Source="{Binding ProfileImageSource}"
+                       WidthRequest="120" HeightRequest="120"
+                       Aspect="AspectFill" />
+            </Border>
+
+            <!-- Caller name -->
+            <Label Text="{Binding CallerName}"
+                   FontSize="26"
+                   FontAttributes="Bold"
+                   TextColor="White"
+                   HorizontalOptions="Center" />
+
+            <!-- Status text -->
+            <Label Text="{Binding StatusText}"
+                   FontSize="15"
+                   TextColor="#8888bb"
+                   HorizontalOptions="Center" />
+
+            <Label Text="URGENT"
+                   IsVisible="{Binding IsUrgentCall}"
+                   FontSize="13"
+                   FontAttributes="Bold"
+                   TextColor="White"
+                   BackgroundColor="#d32f2f"
+                   Padding="8,2"
+                   HorizontalOptions="Center" />
+
+            <!-- Connected indicator -->
+            <HorizontalStackLayout HorizontalOptions="Center"
+                                   Spacing="8"
+                                   IsVisible="{Binding IsCallActive}">
+                <Ellipse WidthRequest="10" HeightRequest="10"
+                         Fill="#00e676" />
+                <Label Text="Live"
+                       TextColor="#00e676"
+                       FontSize="14" />
+            </HorizontalStackLayout>
+
+            <!-- Waiting state -->
+            <Label Text="No incoming calls"
+                   FontSize="16"
+                   TextColor="#555577"
+                   HorizontalOptions="Center"
+                   IsVisible="{Binding IsNotCallActive}" />
+
+        </VerticalStackLayout>
+
+        <!-- ── Buttons ───────────────────────────────────────────── -->
+        <Grid Grid.Row="1" Margin="0,0,0,56">
+
+            <!-- Accept / Reject (incoming call) -->
+            <HorizontalStackLayout HorizontalOptions="Center"
+                                   Spacing="56"
+                                   IsVisible="{Binding HasIncomingCall}">
+
+                <!-- Reject -->
+                <VerticalStackLayout HorizontalOptions="Center" Spacing="8">
+                    <Border StrokeShape="RoundRectangle 40"
+                            WidthRequest="80" HeightRequest="80"
+                            BackgroundColor="#e53935">
+                        <Label Text="📵"
+                               FontSize="32"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnRejectTapped" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Border>
+                    <Label Text="Decline"
+                           TextColor="#8888bb"
+                           FontSize="13"
+                           HorizontalOptions="Center" />
+                </VerticalStackLayout>
+
+                <!-- Accept -->
+                <VerticalStackLayout HorizontalOptions="Center" Spacing="8">
+                    <Border StrokeShape="RoundRectangle 40"
+                            WidthRequest="80" HeightRequest="80"
+                            BackgroundColor="#00c853">
+                        <Label Text="📞"
+                               FontSize="32"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnAcceptTapped" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Border>
+                    <Label Text="Accept"
+                           TextColor="#8888bb"
+                           FontSize="13"
+                           HorizontalOptions="Center" />
+                </VerticalStackLayout>
+
+            </HorizontalStackLayout>
+
+            <!-- Mute + End call (active call) -->
+            <HorizontalStackLayout HorizontalOptions="Center"
+                                   Spacing="40"
+                                   IsVisible="{Binding IsCallActive}">
+
+                <!-- Mute -->
+                <VerticalStackLayout HorizontalOptions="Center" Spacing="8">
+                    <Border StrokeShape="RoundRectangle 35"
+                            WidthRequest="70" HeightRequest="70"
+                            BackgroundColor="#1e1e3f"
+                            Stroke="#3a3aff">
+                        <Label Text="{Binding MuteIcon}"
+                               FontSize="28"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnMuteTapped" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Border>
+                    <Label Text="Mute"
+                           TextColor="#8888bb" FontSize="12"
+                           HorizontalOptions="Center" />
+                </VerticalStackLayout>
+
+                <!-- End call -->
+                <VerticalStackLayout HorizontalOptions="Center" Spacing="8">
+                    <Border StrokeShape="RoundRectangle 40"
+                            WidthRequest="80" HeightRequest="80"
+                            BackgroundColor="#e53935">
+                        <Label Text="📵"
+                               FontSize="32"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnEndCallTapped" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Border>
+                    <Label Text="End"
+                           TextColor="#8888bb" FontSize="12"
+                           HorizontalOptions="Center" />
+                </VerticalStackLayout>
+
+            </HorizontalStackLayout>
+
+        </Grid>
+
+    </Grid>
+</ContentPage>

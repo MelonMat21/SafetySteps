@@ -1,0 +1,59 @@
+{
+  "rules": {
+    "users": {
+      ".indexOn": ["uid", "role", "fcmToken"],
+      // Admins can list everyone (dashboard, password reset). Anyone signed in may
+      // run the "role == admin" query, which is how the app finds admins to call/notify.
+      ".read": "auth != null && (root.child('users').child(auth.uid).child('role').val() === 'admin' || (query.orderByChild === 'role' && query.equalTo === 'admin'))",
+      "$uid": {
+        // Your own profile, any admin's profile, or anything if you are an admin.
+        ".read": "auth != null && (auth.uid === $uid || data.child('role').val() === 'admin' || root.child('users').child(auth.uid).child('role').val() === 'admin')",
+        // Only you can write your own profile, and it cannot be deleted from the app.
+        ".write": "auth != null && auth.uid === $uid && newData.exists()",
+        // Sign-up may only choose student/teacher, and the role can never be changed
+        // from the app afterwards. Admins are made by editing role in the Firebase console.
+        "role": {
+          ".validate": "(!data.exists() && (newData.val() === 'student' || newData.val() === 'teacher')) || newData.val() === data.val()"
+        },
+        "uid": {
+          ".validate": "newData.val() === $uid"
+        }
+      }
+    },
+    "calls": {
+      ".indexOn": ["receiverId", "receiverUid", "status", "callerId"],
+      // Admins poll for calls addressed to themselves.
+      ".read": "auth != null && (query.orderByChild === 'receiverId' || query.orderByChild === 'receiverUid') && query.equalTo === auth.uid",
+      "$callId": {
+        ".read": "auth != null && (data.child('callerId').val() === auth.uid || data.child('receiverId').val() === auth.uid || data.child('receiverUid').val() === auth.uid)",
+        // The caller creates the call; afterwards only the caller or the receiver can update it.
+        ".write": "auth != null && newData.exists() && (data.exists() ? (data.child('callerId').val() === auth.uid || data.child('receiverId').val() === auth.uid || data.child('receiverUid').val() === auth.uid) : newData.child('callerId').val() === auth.uid)",
+        "callerId": {
+          ".validate": "!data.exists() || newData.val() === data.val()"
+        }
+      }
+    },
+    "emergency_reports": {
+      ".indexOn": ["submittedBy", "status"],
+      // Admins see every report; a student may only query their own.
+      ".read": "auth != null && (root.child('users').child(auth.uid).child('role').val() === 'admin' || (query.orderByChild === 'submittedBy' && query.equalTo === auth.uid))",
+      "$reportId": {
+        ".read": "auth != null && data.child('submittedBy').val() === auth.uid",
+        // Admins can update/delete any report. A student can create a report as
+        // themselves and update it (live location), but not delete it.
+        ".write": "auth != null && (root.child('users').child(auth.uid).child('role').val() === 'admin' || (newData.exists() && (data.exists() ? data.child('submittedBy').val() === auth.uid : newData.child('submittedBy').val() === auth.uid)))",
+        "submittedBy": {
+          ".validate": "!data.exists() || newData.val() === data.val()"
+        }
+      }
+    },
+    "admin_alerts": {
+      ".indexOn": ["reportId", "priority", "status"],
+      ".read": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'admin'",
+      "$alertId": {
+        // Anyone signed in can create a new alert; only admins can change or delete one.
+        ".write": "auth != null && (root.child('users').child(auth.uid).child('role').val() === 'admin' || (!data.exists() && newData.exists()))"
+      }
+    }
+  }
+}
