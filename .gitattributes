@@ -1,0 +1,18 @@
+# Normalize line endings: stored as LF in the repo, checked out natively.
+* text=auto
+
+# Visual Studio needs CRLF for these
+*.sln     text eol=crlf
+*.csproj  text eol=crlf
+
+# Binary assets — never touch line endings
+*.png     binary
+*.jpg     binary
+*.jpeg    binary
+*.gif     binary
+*.ico     binary
+*.ttf     binary
+*.otf     binary
+*.mp4     binary
+*.mp3     binary
+*.wav     binary

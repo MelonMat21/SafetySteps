@@ -1,4 +1,4 @@
- <Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFrameworks>net10.0-android</TargetFrameworks>
@@ -62,165 +62,12 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
 		<PackageReference Include="FirebaseAuthentication.net" Version="4.1.0" />
 		<PackageReference Include="Xamarin.Firebase.Messaging" Version="123.1.0.2" />
-<PackageReference Include="Xamarin.GooglePlayServices.Base" Version="118.4.0.2" />		
-
+		<PackageReference Include="Xamarin.GooglePlayServices.Base" Version="118.4.0.2" />
 
 		<PackageReference Include="Xamarin.Agora.Full.Android" Version="3.7.1" />
 
 		<!-- AndroidX -->
 		<PackageReference Include="Xamarin.AndroidX.Lifecycle.Runtime" Version="2.10.0.2" />
-	</ItemGroup>
-
-	<!-- ── Code-behind bindings ─────────────────────────────────────── -->
-	<ItemGroup>
-		<Compile Update="HomePage.xaml.cs">
-			<DependentUpon>HomePage.xaml</DependentUpon>
-		</Compile>
-		<Compile Update="AlertPage.xaml.cs">
-			<DependentUpon>AlertPage.xaml</DependentUpon>
-		</Compile>
-		<Compile Update="HistoryPage.xaml.cs">
-			<DependentUpon>HistoryPage.xaml</DependentUpon>
-		</Compile>
-		<Compile Update="InfosPage.xaml.cs">
-			<DependentUpon>InfosPage.xaml</DependentUpon>
-		</Compile>
-		<Compile Update="LoginPage.xaml.cs">
-			<DependentUpon>LoginPage.xaml</DependentUpon>
-		</Compile>
-		<Compile Update="SignupPage.xaml.cs">
-			<DependentUpon>SignupPage.xaml</DependentUpon>
-		</Compile>
-	</ItemGroup>
-
-	<!-- ── XAML Pages ───────────────────────────────────────────────── -->
-	<ItemGroup>
-		<MauiXaml Update="AboutUs.xaml">
-		  <Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="AdminProfile.xaml">
-		  <Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="Adminresetpasswordpage.xaml">
-		  <Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="Adminstudentprofilepage.xaml">
-		  <Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="AppShell.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="CallPage.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="CallsPage.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="Hazardinfopage.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="HomePageAdmin.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="InfosPage.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-
-		<MauiXaml Update="InfoPage\AsthmaAttack.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="InfoPage\Burn.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="InfoPage\Choking.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="InfoPage\Cut.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="InfoPage\Earthquake.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="InfoPage\ElectricalAccident.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="InfoPage\ExtremeHeat.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="InfoPage\Fainting.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="InfoPage\Fire.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="InfoPage\Flood.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="InfoPage\Fracture.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="InfoPage\HeatStroke.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="InfoPage\Landslide.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="InfoPage\NoseBleed.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="InfoPage\Sprain.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="InfoPage\Stampede.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="InfoPage\Strain.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="InfoPage\StructuralCollapse.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="InfoPage\Tsunami.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="InfoPage\Typhoon.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="InfoPage\VolcanicEruption.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="ReportDetailSheet.xaml">
-		  <Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-
-		<MauiXaml Update="ReportHistoryAdmin.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-
-		<MauiXaml Update="SettingsPage.xaml">
-		  <Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="SignupPage.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="HomePage.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="AlertPage.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="HistoryPage.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="Studentchangepasswordpage.xaml">
-		  <Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="StudentProfile.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="TutorialPage.xaml">
-		  <Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
 	</ItemGroup>
 
 </Project>
