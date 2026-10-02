@@ -46,7 +46,7 @@
 
 	<!-- ── Firebase Config ──────────────────────────────────────────── -->
 	<ItemGroup>
-		<GoogleServicesJson Include="Platforms\Android\google-services.json" />
+		<GoogleServicesJson Include="Platforms\Android\google-services.json" Condition="Exists('Platforms\Android\google-services.json')" />
 	</ItemGroup>
 
 	<!-- ── Local secrets (.env.local is gitignored; see .env.example) ── -->

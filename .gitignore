@@ -2,6 +2,8 @@
 .env
 .env.local
 *firebase-adminsdk*.json
+google-services.json
+GoogleService-Info.plist
 
 # ── .NET / MAUI build output ───────────────────────────────────────
 bin/

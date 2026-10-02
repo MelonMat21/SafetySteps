@@ -2,7 +2,7 @@
 
 public static class FirebaseConfig
 {
-    public const string ApiKey = "REMOVED";
+    public static string ApiKey => Env.FirebaseApiKey;
     public const string ProjectId = "safetysteps-f4f77";
 
     // ✅ Correct Realtime Database URL (from your Firebase console screenshot)
