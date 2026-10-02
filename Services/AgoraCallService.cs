@@ -11,6 +11,8 @@ public class AgoraCallService
     private readonly AgoraRtcHandler _handler;
     private AudioManager? _audioManager;
     private Context? _context;
+    private readonly AgoraTokenService _tokenService;
+    private string? _currentChannel;
 
     // ── Events ──────────────────────────────────────────────────────────
     public event Action<uint>? OnRemoteUserJoined;
@@ -18,9 +20,12 @@ public class AgoraCallService
     public event Action<string, uint>? OnJoinChannelSuccess;
     public event Action<uint>? OnFirstRemoteAudioReceived;
 
-    public AgoraCallService()
+    public AgoraCallService(AgoraTokenService tokenService)
     {
+        _tokenService = tokenService;
         _handler = new AgoraRtcHandler();
+        // Agora tokens expire after 1 hour — fetch a fresh one before the call drops.
+        _handler.TokenExpiring += () => _ = RenewTokenAsync();
         _handler.RemoteUserJoined += uid => OnRemoteUserJoined?.Invoke(uid);
         _handler.RemoteUserOffline += uid => OnRemoteUserOffline?.Invoke(uid);
         _handler.JoinSuccess += (ch, uid) => OnJoinChannelSuccess?.Invoke(ch, uid);
@@ -88,6 +93,7 @@ public class AgoraCallService
         _engine.SetEnableSpeakerphone(true);
 
 
+        _currentChannel = channelName;
         int result = _engine.JoinChannel(token, channelName, "", 0);
 
         Console.WriteLine(result == 0
@@ -95,8 +101,25 @@ public class AgoraCallService
             : $"[Agora] JoinChannel FAILED  result={result}  channel={channelName}");
     }
 
+    private async Task RenewTokenAsync()
+    {
+        var channel = _currentChannel;
+        if (_engine == null || channel == null) return;
+
+        var token = await _tokenService.GetTokenAsync(channel, 0);
+        if (string.IsNullOrEmpty(token) || channel != _currentChannel)
+        {
+            Console.WriteLine("[Agora] Token renewal failed or call ended");
+            return;
+        }
+
+        int result = _engine.RenewToken(token);
+        Console.WriteLine($"[Agora] RenewToken result={result}");
+    }
+
     public void LeaveChannel()
     {
+        _currentChannel = null;
         _engine?.LeaveChannel();
         Console.WriteLine("[Agora] LeaveChannel");
     }
@@ -141,6 +164,19 @@ internal class AgoraRtcHandler : IRtcEngineEventHandler
     public event Action<string, uint>? JoinSuccess;
     public event Action<uint>? FirstRemoteAudioReceived;
     public event Action? SpeakerphoneReady;   // fired after OnJoinChannelSuccess
+    public event Action? TokenExpiring;       // token about to expire, or already expired
+
+    public override void OnTokenPrivilegeWillExpire(string token)
+    {
+        Console.WriteLine("[Agora] Token will expire in 30s — renewing");
+        TokenExpiring?.Invoke();
+    }
+
+    public override void OnRequestToken()
+    {
+        Console.WriteLine("[Agora] Token expired — requesting a new one");
+        TokenExpiring?.Invoke();
+    }
 
     public override void OnJoinChannelSuccess(string channel, int uid, int elapsed)
     {
@@ -181,8 +217,8 @@ internal class AgoraRtcHandler : IRtcEngineEventHandler
             2 => "Invalid argument",
             7 => "SDK not initialized — call Initialize() first",
             17 => "Already in a channel",
-            101 => "Invalid App ID — also check RTC token: Agora returns 101 if token was built with a different App ID than RtcEngine.Create (align Railway token server env with AppConstants.AgoraAppId)",
-            110 => "Invalid token — set App Certificate to 'No certificate' in Agora Console",
+            101 => "Invalid App ID — also check RTC token: Agora returns 101 if token was built with a different App ID than RtcEngine.Create (align the token server's Agora__AppId on Render with AGORA_APP_ID in .env.local)",
+            110 => "Invalid token — check the token server's Agora__AppCertificate matches the Agora Console",
             111 => "Token expired",
             112 => "Token invalid — uid mismatch",
             113 => "Not in channel",

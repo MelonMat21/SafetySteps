@@ -11,6 +11,7 @@ public static class Env
     private static readonly Lazy<Dictionary<string, string>> _values = new(Load);
 
     public static string FirebaseApiKey => Get("FIREBASE_API_KEY");
+    public static string AgoraAppId => Get("AGORA_APP_ID");
     public static string ServiceAccountEmail => Get("FIREBASE_SERVICE_ACCOUNT_EMAIL");
     public static string ServiceAccountPrivateKey => Get("FIREBASE_SERVICE_ACCOUNT_PRIVATE_KEY");
 

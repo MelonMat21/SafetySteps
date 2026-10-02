@@ -16,7 +16,7 @@ public partial class App : Application
     private readonly FirestoreService _firestore;
 
     public App(FirebaseAuthService authService, IncomingCallViewModel incomingCallVm,
-               FirestoreService firestore)
+               FirestoreService firestore, AgoraTokenService tokenService)
     {
         InitializeComponent();
         AuthService = authService;
@@ -25,6 +25,7 @@ public partial class App : Application
         MainPage = new AppShell();
 
         _ = CheckSessionAsync();
+        _ = tokenService.WarmUpAsync(); // wake the token server before the first call
     }
 
     private async Task CheckSessionAsync()

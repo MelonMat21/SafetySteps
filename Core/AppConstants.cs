@@ -2,8 +2,8 @@ namespace SAFETY_STEPS;
 
 public static class AppConstants
 {
-    // 🔑 Your Agora App ID
-    public const string AgoraAppId = "b6e546112ffc4f8cbd176532d7e588ba";
+    // 🔑 Your Agora App ID (from .env.local)
+    public static string AgoraAppId => FireBase.Env.AgoraAppId;
 
     // ── Admin UID removed ─────────────────────────────────────────────────
     // Admin is now determined dynamically by role == "admin" in the database.

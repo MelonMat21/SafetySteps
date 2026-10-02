@@ -141,7 +141,7 @@ public class CallViewModel : INotifyPropertyChanged
         // ── Get Agora token ───────────────────────────────────────────────
         var token = await _tokenService.GetTokenAsync(_channelName, 0);
         Console.WriteLine($"[CallVM] Token fetched: " +
-            (string.IsNullOrEmpty(token) ? "NULL/EMPTY ← CHECK RAILWAY SERVER URL in FirebaseConfig.AgoraTokenServerBaseUrl" : "OK"));
+            (string.IsNullOrEmpty(token) ? "NULL/EMPTY ← check the token server (AgoraTokenService.ServerUrl) and that the user is signed in" : "OK"));
 
         if (string.IsNullOrEmpty(token))
         {
