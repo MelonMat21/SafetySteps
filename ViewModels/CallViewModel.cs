@@ -106,8 +106,8 @@ public class CallViewModel : INotifyPropertyChanged
         {
             try
             {
-                var me = await _firestore.GetDocumentAsync("users", myId);
-                if (me != null)
+                var me = await _firestore.GetFieldsAsync("users", myId, "studentNumber", "studentID", "name");
+                if (me.Count > 0)
                 {
                     if (string.IsNullOrWhiteSpace(myStudentNumber))
                     {
@@ -138,19 +138,10 @@ public class CallViewModel : INotifyPropertyChanged
         IsCalling = true;
         StatusText = $"Calling {ReceiverName}…";
 
-        // ── Get Agora token ───────────────────────────────────────────────
-        var token = await _tokenService.GetTokenAsync(_channelName, 0);
-        Console.WriteLine($"[CallVM] Token fetched: " +
-            (string.IsNullOrEmpty(token) ? "NULL/EMPTY ← check the token server (AgoraTokenService.ServerUrl) and that the user is signed in" : "OK"));
-
-        if (string.IsNullOrEmpty(token))
-        {
-            StatusText = "Failed to get call token. Check server URL.";
-            IsCalling = false;
-            return;
-        }
-
-        _agora.JoinChannel(_channelName, token);
+        // ── Get Agora token — in parallel with signalling ─────────────────
+        // The token server can take a while to wake up, so the call doc is
+        // written and the admin notified while the token is still on its way.
+        var tokenTask = _tokenService.GetTokenAsync(_channelName, 0);
 
         // ── Signal the call (studentNumber is now included in the initial doc) ─
         await _signal.StartCallAsync(myId, myName, ReceiverUserId, _channelName,
@@ -158,19 +149,43 @@ public class CallViewModel : INotifyPropertyChanged
                                      isUrgent: IsUrgent,
                                      studentNumber: myStudentNumber);   // ← FIX: pass here directly
 
-        _signal.ListenForCallStatus(_channelName);
+        var channel = _channelName;
+        _signal.ListenForCallStatus(channel);
+        _ = NotifyReceiverAsync(myName, channel);
 
-        // ── Send FCM to receiver ──────────────────────────────────────────
+        var token = await tokenTask;
+
+        // The caller may have hung up (or been declined) while the token was loading.
+        // (An accept that arrived meanwhile sets IsCallActive, so we still join.)
+        if (IsIdle || channel != _channelName) return;
+        Console.WriteLine($"[CallVM] Token fetched: " +
+            (string.IsNullOrEmpty(token) ? "NULL/EMPTY ← check the token server (AgoraTokenService.ServerUrl) and that the user is signed in" : "OK"));
+
+        if (string.IsNullOrEmpty(token))
+        {
+            // Take the call back out of the admin's queue.
+            _signal.StopListeningForStatus();
+            await _signal.EndCallAsync(channel);
+            ResetState();
+            StatusText = "Failed to get call token. Check server URL.";
+            return;
+        }
+
+        _agora.JoinChannel(channel, token);
+    }
+
+    // ── Send FCM to receiver ──────────────────────────────────────────────
+    private async Task NotifyReceiverAsync(string myName, string channelName)
+    {
         try
         {
             string? fcmToken = null;
             string? resolvedReceiverId = null;
             var receiverUid = ReceiverUserId;
 
-            // Step 1: direct GET users/{receiverUid}
-            var receiverDoc = await _firestore.GetDocumentAsync("users", receiverUid);
-            if (receiverDoc != null &&
-                receiverDoc.TryGetValue("fcmToken", out var rawTok) &&
+            // Step 1: direct GET users/{receiverUid}/fcmToken
+            var receiverDoc = await _firestore.GetFieldsAsync("users", receiverUid, "fcmToken");
+            if (receiverDoc.TryGetValue("fcmToken", out var rawTok) &&
                 !string.IsNullOrEmpty(rawTok?.ToString()))
             {
                 fcmToken = rawTok.ToString();
@@ -209,11 +224,11 @@ public class CallViewModel : INotifyPropertyChanged
             {
                 if (!string.IsNullOrEmpty(resolvedReceiverId) && resolvedReceiverId != receiverUid)
                 {
-                    await _firestore.PatchFieldsAsync("calls", _channelName,
+                    await _firestore.PatchFieldsAsync("calls", channelName,
                         new Dictionary<string, object> { ["receiverId"] = resolvedReceiverId });
                 }
 
-                await FcmService.SendCallNotificationAsync(fcmToken, myName, _channelName, IsUrgent);
+                await FcmService.SendCallNotificationAsync(fcmToken, myName, channelName, IsUrgent);
                 Console.WriteLine($"[CallVM] FCM call notification sent. resolvedReceiverId='{resolvedReceiverId}'");
             }
             else

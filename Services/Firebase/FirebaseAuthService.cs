@@ -109,26 +109,16 @@ public class FirebaseAuthService
             RefreshToken = savedRefreshToken;
             LocalId = savedLocalId;
 
-            var refreshed = await RefreshTokenAsync();
-            if (!refreshed && _lastRefreshFailedOffline)
-            {
-                // No connection at launch: keep the saved session instead of logging
-                // the user out. The token is refreshed on the first request once online.
-                Console.WriteLine("[Auth] Offline at startup — keeping saved session.");
-            }
-            else if (!refreshed)
-            {
-                SignOut();
-                _authReady.TrySetResult(); // failed — unblock so app can proceed to login
-                return false;
-            }
-
-            Console.WriteLine($"[Auth] Session restored OK — LocalId='{LocalId}'");
-            UserSession.Set(uid: LocalId!, displayName: LocalId!);
+            Console.WriteLine($"[Auth] Session restored — LocalId='{LocalId}'");
+            UserSession.Set(uid: LocalId ?? "", displayName: LocalId ?? "");
             // Restore the saved name + student number from Preferences so the
             // profile page shows the correct values without a full re-login.
             UserSession.RestorePersistedFields();
-            _authReady.TrySetResult(); // success — unblock Firestore calls
+
+            // Refresh the token in the background so the home page opens without
+            // waiting on the network. Firestore calls await AuthReadyAsync, so none
+            // of them go out before the refresh finishes.
+            _ = RefreshRestoredSessionAsync();
             return true;
         }
         catch (Exception ex)
@@ -138,6 +128,30 @@ public class FirebaseAuthService
             _authReady.TrySetResult(); // error — still unblock so app doesn't hang
             return false;
         }
+    }
+
+    /// <summary>Raised when a restored session turns out to be invalid (user must log in again).</summary>
+    public event Action? SessionExpired;
+
+    private async Task RefreshRestoredSessionAsync()
+    {
+        var refreshed = await RefreshTokenAsync();
+        if (!refreshed && !_lastRefreshFailedOffline)
+        {
+            Console.WriteLine("[Auth] Saved session was rejected — signing out.");
+            SignOut();
+            _authReady.TrySetResult();
+            SessionExpired?.Invoke();
+            return;
+        }
+
+        if (!refreshed)
+        {
+            // No connection at launch: keep the saved session instead of logging
+            // the user out. The token is refreshed on the first request once online.
+            Console.WriteLine("[Auth] Offline at startup — keeping saved session.");
+        }
+        _authReady.TrySetResult();
     }
 
     // ── Refresh Token ────────────────────────────────────────

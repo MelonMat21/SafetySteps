@@ -303,8 +303,9 @@ public partial class HistoryPage : ContentPage
 
                 try
                 {
-                    var doc = await Firestore.GetDocumentAsync("emergency_reports", documentId);
-                    if (doc == null) continue;
+                    // Only the status — the full report may include a photo.
+                    var doc = await Firestore.GetFieldsAsync("emergency_reports", documentId, "status");
+                    if (doc.Count == 0) continue;
 
                     string liveStatus = doc.TryGetValue("status", out var sv)
                         ? sv?.ToString() ?? "" : "";

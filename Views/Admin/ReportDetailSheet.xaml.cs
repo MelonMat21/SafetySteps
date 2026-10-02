@@ -121,6 +121,7 @@ public partial class ReportDetailSheet : ContentPage
                 return;
             }
 
+            _ = Firestore.DeleteDocumentAsync("report_photos", _documentId);
             await Navigation.PopModalAsync(animated: true);
         }
         catch (Exception ex)
@@ -183,26 +184,12 @@ public partial class ReportDetailSheet : ContentPage
         bool isResponded = status == "Responded";
 
         // ── Incident Photo ────────────────────────────────────
+        // Older reports carry the photo inline; newer ones keep it in report_photos.
         string photoB64 = Get("photoBase64");
         if (!string.IsNullOrWhiteSpace(photoB64))
-        {
-            try
-            {
-                byte[] imageBytes = Convert.FromBase64String(photoB64);
-                IncidentPhotoImage.Source = ImageSource.FromStream(
-                    () => new MemoryStream(imageBytes));
-                PhotoBorder.IsVisible = true;
-                NoPhotoLabel.IsVisible = false;
-                PhotoTapHint.IsVisible = true;
-                // Mirror source to expanded view
-                ExpandedPhotoImage.Source = ImageSource.FromStream(
-                    () => new MemoryStream(imageBytes));
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"[ReportDetailSheet] Photo load error: {ex.Message}");
-            }
-        }
+            ShowPhoto(photoB64);
+        else
+            _ = LoadPhotoAsync();
 
         if (hasGps)
         {
@@ -212,6 +199,33 @@ public partial class ReportDetailSheet : ContentPage
         else
         {
             LoadNoLocationPage();
+        }
+    }
+
+    private async Task LoadPhotoAsync()
+    {
+        var photoB64 = await Firestore.GetReportPhotoAsync(_documentId);
+        if (!string.IsNullOrWhiteSpace(photoB64))
+            MainThread.BeginInvokeOnMainThread(() => ShowPhoto(photoB64));
+    }
+
+    private void ShowPhoto(string photoB64)
+    {
+        try
+        {
+            byte[] imageBytes = Convert.FromBase64String(photoB64);
+            IncidentPhotoImage.Source = ImageSource.FromStream(
+                () => new MemoryStream(imageBytes));
+            PhotoBorder.IsVisible = true;
+            NoPhotoLabel.IsVisible = false;
+            PhotoTapHint.IsVisible = true;
+            // Mirror source to expanded view
+            ExpandedPhotoImage.Source = ImageSource.FromStream(
+                () => new MemoryStream(imageBytes));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[ReportDetailSheet] Photo load error: {ex.Message}");
         }
     }
 
@@ -236,10 +250,12 @@ public partial class ReportDetailSheet : ContentPage
 
                 try
                 {
-                    var doc = await Firestore.GetDocumentAsync(_collectionId, _documentId);
+                    // Only the fields we need — the full report may include a photo.
+                    var doc = await Firestore.GetFieldsAsync(_collectionId, _documentId,
+                        "status", "latitude", "longitude");
                     currentInterval = TrackingIntervalMs;
 
-                    if (doc == null) continue;
+                    if (doc.Count == 0) continue;
 
                     string liveStatus = doc.TryGetValue("status", out var sv) ? sv?.ToString() ?? "" : "";
                     if (liveStatus == "Responded")

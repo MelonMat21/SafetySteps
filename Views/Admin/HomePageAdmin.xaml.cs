@@ -32,6 +32,9 @@ public partial class HomePageAdmin : ContentPage
             RefreshQueueCountersAsync(),
             LoadRecentReportsAsync()
         );
+
+        // One-time background move of old inline report photos (no-op once done).
+        _ = _firestore.MigrateReportPhotosAsync();
     }
 
     // ── Call queue counters (existing) ───────────────────────────────────
@@ -55,43 +58,42 @@ public partial class HomePageAdmin : ContentPage
     {
         try
         {
-            // Fetch all reports then sort client-side.
-            // If you add a "createdAt" .indexOn rule you can move sorting to the query.
-            var allReports = await _firestore.GetCollectionAsync("emergency_reports");
+            // Count from keys only, and download just the newest N reports —
+            // never the whole collection (reports can carry photos).
+            var keysTask = _firestore.GetKeysAsync("emergency_reports");
+            var recentTask = _firestore.GetLastByKeyAsync("emergency_reports", MaxRecentReports);
+            await Task.WhenAll(keysTask, recentTask);
 
-            if (allReports.Count == 0)
+            var total = keysTask.Result.Count;
+            UpdateReportCountLabels(total);
+
+            if (total == 0 || recentTask.Result.Count == 0)
             {
                 ShowNoReports();
-                UpdateReportCountLabels(0);
                 return;
             }
 
             // Sort newest-first. Reports have no "createdAt"; their docId is
             // "report_yyyyMMddHHmmssfff", which sorts chronologically.
-            var sorted = allReports
+            var recent = recentTask.Result
                 .OrderByDescending(r =>
                     r.TryGetValue("docId", out var id) ? id?.ToString() ?? "" : "",
                     StringComparer.Ordinal)
                 .ToList();
 
-            // Update the count labels with the TOTAL count of all reports.
-            UpdateReportCountLabels(sorted.Count);
-
-            // Take only the most recent N for the UI card.
-            var recent = sorted.Take(MaxRecentReports).ToList();
-
-            // Pre-fetch user docs for all unique submitters in a single pass.
+            // Fetch the submitters' names in parallel (name + ID only, no photos).
             var submitterUids = recent
                 .Select(r => r.TryGetValue("submittedBy", out var uid) ? uid?.ToString() ?? "" : "")
                 .Where(u => !string.IsNullOrEmpty(u))
                 .Distinct()
                 .ToList();
 
+            var fetched = await Task.WhenAll(submitterUids.Select(uid =>
+                _firestore.GetFieldsAsync("users", uid, "name", "studentID")));
+
             var userDocs = new Dictionary<string, Dictionary<string, object>?>();
-            foreach (var uid in submitterUids)
-            {
-                userDocs[uid] = await _firestore.GetDocumentAsync("users", uid);
-            }
+            for (int i = 0; i < submitterUids.Count; i++)
+                userDocs[submitterUids[i]] = fetched[i];
 
             // Build UI rows on the main thread.
             RecentReportsStack.Children.Clear();

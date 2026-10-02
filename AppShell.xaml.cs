@@ -107,7 +107,8 @@ namespace SAFETY_STEPS
                                               string userName,
                                               FirebaseAuthService auth,
                                               FirestoreService firestore,
-                                              IncomingCallViewModel? incomingVm = null)
+                                              IncomingCallViewModel? incomingVm = null,
+                                              Dictionary<string, object>? userDoc = null)
         {
             Preferences.Set("user_id", userId);
             Preferences.Set("user_name", userName);
@@ -119,7 +120,7 @@ namespace SAFETY_STEPS
             if (role == "admin")
             {
 #if ANDROID
-                await SyncAdminFcmTokenFromPreferencesAsync(firestore);
+                _ = SyncAdminFcmTokenFromPreferencesAsync(firestore);
 
                 var vm = incomingVm
                     ?? IPlatformApplication.Current?.Services.GetService<IncomingCallViewModel>();
@@ -135,9 +136,11 @@ namespace SAFETY_STEPS
             else
             {
                 // ── Load student number + display name from Firestore ─────────
+                // (reuses the doc the login page already fetched, when given)
                 try
                 {
-                    var userDoc = await firestore.GetDocumentAsync("users", sessionUid);
+                    userDoc ??= await firestore.GetFieldsAsync("users", sessionUid,
+                        "name", "studentNumber", "studentID");
                     if (userDoc != null)
                     {
                         // Display name — prefer the saved "name" field over the email

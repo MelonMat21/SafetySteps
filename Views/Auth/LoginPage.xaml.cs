@@ -59,13 +59,15 @@ public partial class LoginPage : ContentPage
                 Console.WriteLine("[Login] ⚠️ uid patch returned false — read may still fail if rules require it.");
 
             // ── Fetch user profile ────────────────────────────────────────────
-            var userData = await _firestore.GetDocumentAsync("users", _auth.LocalId!);
+            // Only the fields login needs — the full doc may still carry a profile photo.
+            var userData = await _firestore.GetFieldsAsync("users", _auth.LocalId!,
+                "role", "name", "studentNumber", "studentID");
 
             // ── FIX (Bug 1): Hard-fail instead of silently falling back to "student"
             // If the profile is null the role is genuinely unknown — letting the user
             // in as a student would be a security hole for admins whose signup write
             // failed silently (Bug 2).
-            if (userData == null)
+            if (userData.Count == 0)
             {
                 Console.WriteLine($"[Login] Profile not found for UID {_auth.LocalId} — aborting.");
                 _auth.SignOut();
@@ -116,33 +118,14 @@ public partial class LoginPage : ContentPage
             }
 
             // ── Save FCM token for ALL users (student and admin) ──────────────
+            // Runs in the background so login doesn't wait on it.
 #if ANDROID
-            try
-            {
-                var tcs = new TaskCompletionSource<string?>();
-                FirebaseMessaging.Instance.GetToken()
-                    .AddOnCompleteListener(new TokenListener(tcs));
-
-                var fcmToken = await tcs.Task;
-
-                Console.WriteLine($"[FCM] Token fetched for role='{role}': {fcmToken}");
-
-                if (!string.IsNullOrEmpty(fcmToken))
-                {
-                    Preferences.Set("fcm_token", fcmToken);
-                    await _firestore.PatchFieldsAsync("users", _auth.LocalId!,
-                        new Dictionary<string, object> { ["fcmToken"] = fcmToken });
-                    Console.WriteLine("[FCM] Token saved to DB.");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"[FCM] Token error: {ex.Message}");
-            }
+            _ = SaveFcmTokenAsync(_auth.LocalId!, role);
 #endif
+            _ = _firestore.MigrateOwnProfilePhotoAsync(_auth.LocalId!);
 
             // Try to get the display name — fall back to studentId if not set
-            var userName = userData != null && userData.ContainsKey("name")
+            var userName = userData.ContainsKey("name")
                 ? userData["name"]?.ToString() ?? studentId
                 : studentId;
 
@@ -159,12 +142,8 @@ public partial class LoginPage : ContentPage
                 userId: studentId,
                 userName: userName,
                 auth: _auth,
-                firestore: _firestore);
-
-#if ANDROID
-            if (role == "admin")
-                await AppShell.SyncAdminFcmTokenFromPreferencesAsync(_firestore);
-#endif
+                firestore: _firestore,
+                userDoc: userData);
 
             // ── Set header labels on HomePage (students only) ─────────
             if (role != "admin" && Shell.Current.CurrentPage is HomePage homePage)
@@ -182,6 +161,34 @@ public partial class LoginPage : ContentPage
             await DisplayAlert("Error", "Something went wrong. Please try again.", "OK");
         }
     }
+
+#if ANDROID
+    private async Task SaveFcmTokenAsync(string uid, string role)
+    {
+        try
+        {
+            var tcs = new TaskCompletionSource<string?>();
+            FirebaseMessaging.Instance.GetToken()
+                .AddOnCompleteListener(new TokenListener(tcs));
+
+            var fcmToken = await tcs.Task;
+
+            Console.WriteLine($"[FCM] Token fetched for role='{role}': {fcmToken}");
+
+            if (!string.IsNullOrEmpty(fcmToken))
+            {
+                Preferences.Set("fcm_token", fcmToken);
+                await _firestore.PatchFieldsAsync("users", uid,
+                    new Dictionary<string, object> { ["fcmToken"] = fcmToken });
+                Console.WriteLine("[FCM] Token saved to DB.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[FCM] Token error: {ex.Message}");
+        }
+    }
+#endif
 
     private async void OnCreateAccountClicked(object sender, EventArgs e)
     {

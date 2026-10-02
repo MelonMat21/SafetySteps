@@ -66,6 +66,7 @@ public class FirestoreService
     // ── URL builders — reads _auth.IdToken FRESH every time ───────────────
     // This means after RefreshTokenAsync() we just call NodeUrl() again
     // and the new token is already embedded. No string replacement needed.
+    // collection may be a nested path such as "users/{uid}/name".
     private string NodeUrl(string collection, string? documentId = null)
     {
         var token = Uri.EscapeDataString(_auth.IdToken ?? "");
@@ -173,21 +174,76 @@ public class FirestoreService
             var r = await SendAsync(HttpMethod.Get, () => NodeUrl(collection));
             if (!r.IsSuccessStatusCode) return new();
 
-            var body = await r.Content.ReadAsStringAsync();
-            if (body.Trim() == "null") return new();
-
-            var json = JsonSerializer.Deserialize<JsonElement>(body);
-            var results = new List<Dictionary<string, object>>();
-            if (json.ValueKind == JsonValueKind.Object)
-                foreach (var prop in json.EnumerateObject())
-                {
-                    var d = FlattenNode(prop.Value);
-                    d["docId"] = prop.Name;
-                    results.Add(d);
-                }
-            return results;
+            return ParseCollection(await r.Content.ReadAsStringAsync());
         }
         catch (Exception ex) { Console.WriteLine($"[RTDB GetAll] {ex.Message}"); return new(); }
+    }
+
+    // ── Get only the newest N docs (by key) ───────────────────────────────
+    // Keys like "report_yyyyMMddHHmmssfff" sort chronologically, so this
+    // returns the most recent docs without downloading the whole collection.
+    public async Task<List<Dictionary<string, object>>> GetLastByKeyAsync(string collection, int count)
+    {
+        await EnsureTokenAsync();
+        try
+        {
+            var orderBy = Uri.EscapeDataString("\"$key\"");
+            var r = await SendAsync(HttpMethod.Get,
+                () => $"{NodeUrl(collection)}&orderBy={orderBy}&limitToLast={count}");
+            if (!r.IsSuccessStatusCode) return new();
+
+            return ParseCollection(await r.Content.ReadAsStringAsync());
+        }
+        catch (Exception ex) { Console.WriteLine($"[RTDB GetLast] {ex.Message}"); return new(); }
+    }
+
+    // ── Get only the doc keys of a collection ─────────────────────────────
+    // shallow=true returns { key: true, ... } — no field data — so counting
+    // a collection costs a few bytes per doc instead of the full docs (photos).
+    public async Task<List<string>> GetKeysAsync(string collection)
+    {
+        await EnsureTokenAsync();
+        try
+        {
+            var r = await SendAsync(HttpMethod.Get, () => $"{NodeUrl(collection)}&shallow=true");
+            if (!r.IsSuccessStatusCode) return new();
+
+            var json = JsonSerializer.Deserialize<JsonElement>(await r.Content.ReadAsStringAsync());
+            return json.ValueKind == JsonValueKind.Object
+                ? json.EnumerateObject().Select(p => p.Name).ToList()
+                : new();
+        }
+        catch (Exception ex) { Console.WriteLine($"[RTDB Keys] {ex.Message}"); return new(); }
+    }
+
+    // ── Get selected fields of one document ───────────────────────────────
+    // Each field is fetched by its own child path (in parallel), so large
+    // sibling fields such as base64 photos are never downloaded.
+    // Missing fields are simply absent from the result.
+    public async Task<Dictionary<string, object>> GetFieldsAsync(
+        string collection, string documentId, params string[] fields)
+    {
+        await EnsureTokenAsync();
+        var values = await Task.WhenAll(
+            fields.Select(f => GetValueAsync($"{collection}/{documentId}/{f}")));
+
+        var result = new Dictionary<string, object>();
+        for (int i = 0; i < fields.Length; i++)
+            if (values[i] is { } v) result[fields[i]] = v;
+        return result;
+    }
+
+    private async Task<object?> GetValueAsync(string path)
+    {
+        try
+        {
+            var r = await SendAsync(HttpMethod.Get, () => NodeUrl(path));
+            if (!r.IsSuccessStatusCode) return null;
+
+            var json = JsonSerializer.Deserialize<JsonElement>(await r.Content.ReadAsStringAsync());
+            return json.ValueKind == JsonValueKind.Null ? null : ToValue(json);
+        }
+        catch (Exception ex) { Console.WriteLine($"[RTDB GetValue] {path}: {ex.Message}"); return null; }
     }
 
     // ── Delete ────────────────────────────────────────────────────────────
@@ -228,8 +284,17 @@ public class FirestoreService
     //   "calls":            { ".indexOn": ["receiverId","receiverUid","status","callerId"] }
     //   "users":            { ".indexOn": ["uid","role"] }
     //   "emergency_reports":{ ".indexOn": ["submittedBy","status"] }
-    public async Task<List<Dictionary<string, object>>> QueryCollectionAsync(
+    public Task<List<Dictionary<string, object>>> QueryCollectionAsync(
         string collection, params (string field, string value)[] filters)
+        => QueryCollectionAsync(collection, 0, filters);
+
+    /// <summary>
+    /// Same as above, but only the newest <paramref name="limitToLast"/> matches of the
+    /// first filter are downloaded (0 = no limit). Use it for nodes that keep growing,
+    /// such as call history, where only recent docs matter.
+    /// </summary>
+    public async Task<List<Dictionary<string, object>>> QueryCollectionAsync(
+        string collection, int limitToLast, params (string field, string value)[] filters)
     {
         await EnsureTokenAsync();
         try
@@ -237,7 +302,8 @@ public class FirestoreService
             if (filters.Length == 0) return await GetCollectionAsync(collection);
 
             var (f0, v0) = filters[0];
-            var r = await SendAsync(HttpMethod.Get, () => QueryUrl(collection, f0, v0));
+            var limit = limitToLast > 0 ? $"&limitToLast={limitToLast}" : "";
+            var r = await SendAsync(HttpMethod.Get, () => QueryUrl(collection, f0, v0) + limit);
 
             if (!r.IsSuccessStatusCode)
             {
@@ -279,23 +345,41 @@ public class FirestoreService
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────
+    private static List<Dictionary<string, object>> ParseCollection(string body)
+    {
+        var results = new List<Dictionary<string, object>>();
+        if (body.Trim() == "null") return results;
+
+        var json = JsonSerializer.Deserialize<JsonElement>(body);
+        if (json.ValueKind == JsonValueKind.Object)
+            foreach (var prop in json.EnumerateObject())
+            {
+                var d = FlattenNode(prop.Value);
+                d["docId"] = prop.Name;
+                results.Add(d);
+            }
+        return results;
+    }
+
     private static Dictionary<string, object> FlattenNode(JsonElement el)
     {
         var r = new Dictionary<string, object>();
         if (el.ValueKind != JsonValueKind.Object) return r;
         foreach (var p in el.EnumerateObject())
-            r[p.Name] = p.Value.ValueKind switch
-            {
-                JsonValueKind.String => p.Value.GetString()!,
-                JsonValueKind.Number when p.Value.TryGetInt64(out var l) => (object)l,
-                JsonValueKind.Number => p.Value.GetDouble(),
-                JsonValueKind.True => true,
-                JsonValueKind.False => false,
-                JsonValueKind.Null => null!,
-                _ => p.Value.ToString()
-            };
+            r[p.Name] = ToValue(p.Value);
         return r;
     }
+
+    private static object ToValue(JsonElement v) => v.ValueKind switch
+    {
+        JsonValueKind.String => v.GetString()!,
+        JsonValueKind.Number when v.TryGetInt64(out var l) => (object)l,
+        JsonValueKind.Number => v.GetDouble(),
+        JsonValueKind.True => true,
+        JsonValueKind.False => false,
+        JsonValueKind.Null => null!,
+        _ => v.ToString()
+    };
 
     private static string Trunc(string? s, int max = 400)
     {

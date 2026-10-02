@@ -62,22 +62,27 @@ public partial class AdminResetPasswordPage : ContentPage
 
         try
         {
-            // Fetch all users and filter client-side.
-            // QueryCollectionAsync requires a Firebase .indexOn rule for "studentID"
-            // which is not set — so we do the match here instead.
-            var allUsers = await _firestore.GetCollectionAsync("users");
+            // Indexed lookup first (".indexOn": "studentID" in database.rules.json).
+            // Only if that finds nothing (e.g. rules not deployed yet, or the account
+            // uses "studentNumber") do we fall back to scanning every user.
+            var results = await _firestore.QueryCollectionAsync("users", ("studentID", studentNumber));
 
-            var results = allUsers.Where(d =>
+            if (results.Count == 0)
             {
-                // Support both "studentID" and "studentNumber" field names
-                if (d.TryGetValue("studentID", out var v1) &&
-                    string.Equals(v1?.ToString(), studentNumber, StringComparison.OrdinalIgnoreCase))
-                    return true;
-                if (d.TryGetValue("studentNumber", out var v2) &&
-                    string.Equals(v2?.ToString(), studentNumber, StringComparison.OrdinalIgnoreCase))
-                    return true;
-                return false;
-            }).ToList();
+                var allUsers = await _firestore.GetCollectionAsync("users");
+
+                results = allUsers.Where(d =>
+                {
+                    // Support both "studentID" and "studentNumber" field names
+                    if (d.TryGetValue("studentID", out var v1) &&
+                        string.Equals(v1?.ToString(), studentNumber, StringComparison.OrdinalIgnoreCase))
+                        return true;
+                    if (d.TryGetValue("studentNumber", out var v2) &&
+                        string.Equals(v2?.ToString(), studentNumber, StringComparison.OrdinalIgnoreCase))
+                        return true;
+                    return false;
+                }).ToList();
+            }
 
             if (results.Count == 0)
             {

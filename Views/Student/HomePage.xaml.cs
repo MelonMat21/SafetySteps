@@ -75,8 +75,9 @@ public partial class HomePage : ContentPage
             string uid = UserSession.Uid;
             if (string.IsNullOrEmpty(uid)) return;
 
-            var doc = await _firestore.GetDocumentAsync("users", uid);
-            if (doc == null) return;
+            var doc = await _firestore.GetFieldsAsync("users", uid,
+                "studentNumber", "studentID", "studentId", "role");
+            if (doc.Count == 0) return;
 
             // FIX: Check all three field name variants used across registrations.
             // DB uses "studentID" (capital ID) — the old code checked "studentId"

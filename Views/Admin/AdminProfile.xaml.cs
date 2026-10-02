@@ -38,8 +38,9 @@ public partial class AdminProfile : ContentPage
 
         try
         {
-            var userDoc = await _firestore.GetDocumentAsync("users", UserSession.Uid);
-            if (userDoc != null)
+            var userDoc = await _firestore.GetFieldsAsync("users", UserSession.Uid,
+                "name", "studentID", "studentNumber", "adminId");
+            if (userDoc.Count > 0)
             {
                 // ── Display name ─────────────────────────────────────────────
                 if (userDoc.TryGetValue("name", out var nameVal) &&
@@ -93,11 +94,8 @@ public partial class AdminProfile : ContentPage
         // 2 — base64 blob in DB
         try
         {
-            var userDoc = await _firestore.GetDocumentAsync("users", UserSession.Uid);
-            if (userDoc != null &&
-                userDoc.TryGetValue("profileImageBase64", out var b64Val) &&
-                b64Val is string b64 &&
-                !string.IsNullOrWhiteSpace(b64))
+            var b64 = await _firestore.GetProfilePhotoAsync(UserSession.Uid);
+            if (!string.IsNullOrWhiteSpace(b64))
             {
                 var bytes = Convert.FromBase64String(b64);
                 var destPath = Path.Combine(
@@ -158,8 +156,7 @@ public partial class AdminProfile : ContentPage
             var bytes = await File.ReadAllBytesAsync(filePath);
             var b64 = Convert.ToBase64String(bytes);
 
-            bool ok = await _firestore.PatchFieldsAsync("users", UserSession.Uid,
-                new Dictionary<string, object> { ["profileImageBase64"] = b64 });
+            bool ok = await _firestore.SaveProfilePhotoAsync(UserSession.Uid, b64);
 
             Console.WriteLine(ok
                 ? "[AdminProfile] Profile image uploaded to DB."

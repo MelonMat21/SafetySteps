@@ -128,7 +128,36 @@ public static class FcmService
         }
     }
 
+    // Google access tokens last an hour; reuse one instead of signing a JWT and
+    // making an extra OAuth round-trip before every single notification.
+    private static string? _cachedAccessToken;
+    private static DateTime _cachedAccessTokenExpiresUtc = DateTime.MinValue;
+    private static readonly SemaphoreSlim _tokenLock = new(1, 1);
+
     private static async Task<string?> GetAccessTokenAsync()
+    {
+        if (_cachedAccessToken != null && DateTime.UtcNow < _cachedAccessTokenExpiresUtc)
+            return _cachedAccessToken;
+
+        // Several notifications (one per admin) can be sent at once — fetch only one token.
+        await _tokenLock.WaitAsync();
+        try
+        {
+            if (_cachedAccessToken != null && DateTime.UtcNow < _cachedAccessTokenExpiresUtc)
+                return _cachedAccessToken;
+
+            var token = await FetchAccessTokenAsync();
+            if (token != null)
+            {
+                _cachedAccessToken = token;
+                _cachedAccessTokenExpiresUtc = DateTime.UtcNow.AddMinutes(55);
+            }
+            return token;
+        }
+        finally { _tokenLock.Release(); }
+    }
+
+    private static async Task<string?> FetchAccessTokenAsync()
     {
         try
         {

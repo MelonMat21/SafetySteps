@@ -38,8 +38,9 @@ public partial class StudentProfile : ContentPage
 
         try
         {
-            var userDoc = await _firestore.GetDocumentAsync("users", UserSession.Uid);
-            if (userDoc != null)
+            var userDoc = await _firestore.GetFieldsAsync("users", UserSession.Uid,
+                "name", "studentNumber", "studentID");
+            if (userDoc.Count > 0)
             {
                 // ── Display name ──────────────────────────────────────────────
                 // Always prefer the "name" field saved in the DB over the raw
@@ -99,11 +100,8 @@ public partial class StudentProfile : ContentPage
         // 2 — fall back to base64 stored in Realtime DB
         try
         {
-            var userDoc = await _firestore.GetDocumentAsync("users", UserSession.Uid);
-            if (userDoc != null &&
-                userDoc.TryGetValue("profileImageBase64", out var b64Val) &&
-                b64Val is string b64 &&
-                !string.IsNullOrWhiteSpace(b64))
+            var b64 = await _firestore.GetProfilePhotoAsync(UserSession.Uid);
+            if (!string.IsNullOrWhiteSpace(b64))
             {
                 byte[] imageBytes = Convert.FromBase64String(b64);
 
@@ -164,8 +162,7 @@ public partial class StudentProfile : ContentPage
             byte[] bytes = await File.ReadAllBytesAsync(filePath);
             string b64 = Convert.ToBase64String(bytes);
 
-            bool ok = await _firestore.PatchFieldsAsync("users", UserSession.Uid,
-                new Dictionary<string, object> { ["profileImageBase64"] = b64 });
+            bool ok = await _firestore.SaveProfilePhotoAsync(UserSession.Uid, b64);
 
             Console.WriteLine(ok
                 ? "[StudentProfile] Profile image uploaded to DB."

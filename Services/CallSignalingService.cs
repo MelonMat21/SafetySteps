@@ -12,12 +12,24 @@ public class CallSignalingService
     private const string Collection = "calls";
 
     // ── Polling / back-off constants ─────────────────────────────────────
-    // Base intervals are intentionally generous to stay within Firestore's
-    // free-tier quota. On a 429 the interval doubles up to the cap.
-    private const int IncomingPollBaseMs = 15_000;   // 15 s between incoming-call checks
-    private const int StatusPollBaseMs = 5_000;    // 5 s between status checks (active call)
+    // Realtime DB bills by bandwidth, not reads, and each poll is now a small
+    // limited query, so these can be short. On a 429 the interval doubles up to the cap.
+    private const int IncomingPollBaseMs = 5_000;    // 5 s between incoming-call checks
+    private const int StatusPollBaseMs = 2_000;    // 2 s between status checks (active call)
     private const int PollBackoffMultiple = 2;        // double on each quota hit
     private const int PollMaxIntervalMs = 120_000;  // cap at 2 min
+
+    // Queries by receiver match every call ever made to that user, so only the
+    // newest ones are downloaded. Pending calls are always recent (stale ones
+    // are marked missed after StaleCallAge).
+    private const int RecentCallsLimit = 20;
+
+    // Caller name / student number / photo, cached so the 3-second queue refresh
+    // doesn't re-download the same profile (and photo) on every tick.
+    private static readonly TimeSpan CallerCacheAge = TimeSpan.FromMinutes(10);
+    private readonly System.Collections.Concurrent.ConcurrentDictionary<string, (DateTime FetchedAt, CallerInfo Info)> _callerCache = new();
+
+    private record CallerInfo(string Name, string StudentNumber, string ProfileImageBase64);
 
     // A call still "calling" after this long was abandoned (e.g. the caller's app
     // was killed). It is marked missed so it stops showing in the admin queue.
@@ -45,8 +57,8 @@ public class CallSignalingService
         {
             try
             {
-                var userDoc = await _db.GetDocumentAsync("users", callerId);
-                if (userDoc != null)
+                var userDoc = await _db.GetFieldsAsync("users", callerId, "studentNumber", "studentID");
+                if (userDoc.Count > 0)
                 {
                     // Try "studentNumber" first, then fall back to "studentID"
                     if (!userDoc.TryGetValue("studentNumber", out var snVal) ||
@@ -160,26 +172,8 @@ public class CallSignalingService
 
                 try
                 {
-                    // Query by receiverId (may be student-ID key) AND receiverUid (Firebase UID).
-                    // Both queries count against quota — keep the interval generous.
-                    var byReceiverId = await _db.QueryCollectionAsync(
-                        Collection,
-                        ("receiverId", userId),
-                        ("status", "calling"));
-
-                    var byReceiverUid = await _db.QueryCollectionAsync(
-                        Collection,
-                        ("receiverUid", userId),
-                        ("status", "calling"));
-
+                    var allDocs = await QueryCallingDocsAsync(userId);
                     interval = IncomingPollBaseMs;   // reset on success
-
-                    // Merge, de-duplicate by channelName
-                    var allDocs = byReceiverId
-                        .Concat(byReceiverUid)
-                        .GroupBy(d => d.TryGetValue("channelName", out var cn) ? cn?.ToString() : null)
-                        .Select(g => g.First())
-                        .ToList();
 
                     foreach (var doc in allDocs)
                     {
@@ -197,8 +191,8 @@ public class CallSignalingService
                         var callerId = doc.TryGetValue("callerId", out var rawCid)
                             ? rawCid?.ToString() ?? ""
                             : "";
-                        var profileB64 = await FetchProfileImageBase64Async(callerId);
-                        var call = ToCallData(doc, userId, profileB64);
+                        var caller = await GetCallerInfoAsync(callerId);
+                        var call = ToCallData(doc, userId, caller.ProfileImageBase64);
 
                         Console.WriteLine($"[Signal] Incoming call from {call.CallerName}");
                         MainThread.BeginInvokeOnMainThread(()
@@ -254,35 +248,17 @@ public class CallSignalingService
     {
         if (string.IsNullOrWhiteSpace(adminUid)) return new List<CallData>();
 
-        var byReceiverId = await _db.QueryCollectionAsync(
-            Collection,
-            ("receiverId", adminUid),
-            ("status", "calling"));
+        var uniqueDocs = await QueryCallingDocsAsync(adminUid);
 
-        var byReceiverUid = await _db.QueryCollectionAsync(
-            Collection,
-            ("receiverUid", adminUid),
-            ("status", "calling"));
+        var stale = uniqueDocs.Where(IsStale).ToList();
+        foreach (var doc in stale)
+            if (doc.TryGetValue("channelName", out var staleChannel) && staleChannel is string sc)
+                await MarkMissedAsync(sc);
 
-        // De-duplicate by channelName (same call may match both queries)
-        var uniqueDocs = byReceiverId
-            .Concat(byReceiverUid)
-            .GroupBy(d => d.TryGetValue("channelName", out var cn) ? cn?.ToString() : null)
-            .Select(g => g.First())
-            .ToList();
-
-        // FIX: fetch profile image for each call (same as ListenForIncomingCalls does)
-        // so CallsPage cards and IncomingCallPage both show the correct avatar.
-        var calls = new List<CallData>();
-        foreach (var doc in uniqueDocs)
+        // Resolve every caller in parallel (cached), so CallsPage cards and
+        // IncomingCallPage both show the correct name, number and avatar.
+        var calls = await Task.WhenAll(uniqueDocs.Except(stale).Select(async doc =>
         {
-            if (IsStale(doc))
-            {
-                if (doc.TryGetValue("channelName", out var staleChannel) && staleChannel is string sc)
-                    await MarkMissedAsync(sc);
-                continue;
-            }
-
             var callerId = doc.TryGetValue("callerId", out var rawCid)
                 ? rawCid?.ToString() ?? ""
                 : "";
@@ -293,37 +269,48 @@ public class CallSignalingService
                 ? rawSn?.ToString() ?? ""
                 : "";
 
-            Dictionary<string, object>? userDoc = null;
-            if (!string.IsNullOrWhiteSpace(callerId))
-                userDoc = await _db.GetDocumentAsync("users", callerId);
+            var caller = await GetCallerInfoAsync(callerId);
 
-            if (string.IsNullOrWhiteSpace(callerName) || callerName == "Unknown")
-            {
-                var resolvedName = userDoc != null && userDoc.TryGetValue("name", out var n) ? n?.ToString() ?? "" : "";
-                if (!string.IsNullOrWhiteSpace(resolvedName))
-                    callerName = resolvedName;
-            }
+            if ((string.IsNullOrWhiteSpace(callerName) || callerName == "Unknown") &&
+                !string.IsNullOrWhiteSpace(caller.Name))
+                callerName = caller.Name;
             if (string.IsNullOrWhiteSpace(studentNumber))
-            {
-                studentNumber = userDoc != null && userDoc.TryGetValue("studentNumber", out var sn1) ? sn1?.ToString() ?? "" : "";
-                if (string.IsNullOrWhiteSpace(studentNumber))
-                    studentNumber = userDoc != null && userDoc.TryGetValue("studentID", out var sn2) ? sn2?.ToString() ?? "" : "";
-            }
+                studentNumber = caller.StudentNumber;
 
-            // Reuse the user doc fetched above instead of downloading it a second time.
-            var profileB64 = userDoc != null &&
-                             userDoc.TryGetValue("profileImageBase64", out var p) &&
-                             p is string b64
-                ? b64
-                : "";
             doc["callerName"] = callerName;
             doc["studentNumber"] = studentNumber;
-            calls.Add(ToCallData(doc, adminUid, profileB64));
-        }
+            return ToCallData(doc, adminUid, caller.ProfileImageBase64);
+        }));
 
         return calls
             .OrderByDescending(c => c.IsUrgent)
             .ThenBy(c => c.CreatedAtUtc)
+            .ToList();
+    }
+
+    /// <summary>
+    /// Recent calls addressed to <paramref name="userId"/> that are still ringing.
+    /// Queries receiverId (may be student-ID key) and receiverUid (Firebase UID) in
+    /// parallel and de-duplicates by channelName.
+    /// </summary>
+    private async Task<List<Dictionary<string, object>>> QueryCallingDocsAsync(string userId)
+    {
+        var byReceiverId = _db.QueryCollectionAsync(
+            Collection, RecentCallsLimit,
+            ("receiverId", userId),
+            ("status", "calling"));
+
+        var byReceiverUid = _db.QueryCollectionAsync(
+            Collection, RecentCallsLimit,
+            ("receiverUid", userId),
+            ("status", "calling"));
+
+        await Task.WhenAll(byReceiverId, byReceiverUid);
+
+        return byReceiverId.Result
+            .Concat(byReceiverUid.Result)
+            .GroupBy(d => d.TryGetValue("channelName", out var cn) ? cn?.ToString() : null)
+            .Select(g => g.First())
             .ToList();
     }
 
@@ -350,23 +337,36 @@ public class CallSignalingService
         Console.WriteLine($"[Signal] Updated calls/{channelName} -> {status}");
     }
 
-    private async Task<string> FetchProfileImageBase64Async(string callerId)
+    private async Task<CallerInfo> GetCallerInfoAsync(string callerId)
     {
-        if (string.IsNullOrEmpty(callerId)) return "";
+        if (string.IsNullOrEmpty(callerId)) return new CallerInfo("", "", "");
+
+        if (_callerCache.TryGetValue(callerId, out var cached) &&
+            DateTime.UtcNow - cached.FetchedAt < CallerCacheAge)
+            return cached.Info;
+
         try
         {
-            var userDoc = await _db.GetDocumentAsync("users", callerId);
-            if (userDoc != null &&
-                userDoc.TryGetValue("profileImageBase64", out var raw) &&
-                raw is string b64 &&
-                !string.IsNullOrWhiteSpace(b64))
-                return b64;
+            var fieldsTask = _db.GetFieldsAsync("users", callerId, "name", "studentNumber", "studentID");
+            var photoTask = _db.GetProfilePhotoAsync(callerId);
+            await Task.WhenAll(fieldsTask, photoTask);
+
+            var f = fieldsTask.Result;
+            string Get(string key) => f.TryGetValue(key, out var v) ? v?.ToString() ?? "" : "";
+
+            var sn = Get("studentNumber");
+            if (string.IsNullOrWhiteSpace(sn)) sn = Get("studentID");
+
+            var info = new CallerInfo(Get("name"), sn, photoTask.Result);
+            if (f.Count > 0) // don't cache a failed/empty lookup
+                _callerCache[callerId] = (DateTime.UtcNow, info);
+            return info;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[Signal] Profile image fetch error: {ex.Message}");
+            Console.WriteLine($"[Signal] Caller info fetch error: {ex.Message}");
+            return new CallerInfo("", "", "");
         }
-        return "";
     }
 
     private static bool IsStale(Dictionary<string, object> doc)

@@ -1,7 +1,7 @@
 {
   "rules": {
     "users": {
-      ".indexOn": ["uid", "role", "fcmToken"],
+      ".indexOn": ["uid", "role", "fcmToken", "studentID"],
       // Admins can list everyone (dashboard, password reset). Anyone signed in may
       // run the "role == admin" query, which is how the app finds admins to call/notify.
       ".read": "auth != null && (root.child('users').child(auth.uid).child('role').val() === 'admin' || (query.orderByChild === 'role' && query.equalTo === 'admin'))",
@@ -45,6 +45,21 @@
         "submittedBy": {
           ".validate": "!data.exists() || newData.val() === data.val()"
         }
+      }
+    },
+    // Photos are kept out of the docs above so lists and lookups stay small.
+    "report_photos": {
+      "$reportId": {
+        // Same access as the report itself.
+        ".read": "auth != null && (root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('emergency_reports').child($reportId).child('submittedBy').val() === auth.uid)",
+        ".write": "auth != null && (root.child('users').child(auth.uid).child('role').val() === 'admin' || (newData.exists() && root.child('emergency_reports').child($reportId).child('submittedBy').val() === auth.uid))"
+      }
+    },
+    "user_photos": {
+      "$uid": {
+        // Your own photo, or anyone's if you are an admin (call queue avatars).
+        ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('role').val() === 'admin')",
+        ".write": "auth != null && auth.uid === $uid"
       }
     },
     "admin_alerts": {

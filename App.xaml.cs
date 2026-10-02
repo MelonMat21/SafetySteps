@@ -24,6 +24,9 @@ public partial class App : Application
         _firestore = firestore;
         MainPage = new AppShell();
 
+        AuthService.SessionExpired += () =>
+            MainThread.BeginInvokeOnMainThread(async () => await AppShell.LogoutAsync());
+
         _ = CheckSessionAsync();
         _ = tokenService.WarmUpAsync(); // wake the token server before the first call
     }
@@ -45,34 +48,15 @@ public partial class App : Application
                     var savedUserName = Preferences.Get("user_name", "");
                     UserSession.Set(firebaseUid, savedUserName);
 
-                    try
-                    {
-                        var tcs = new TaskCompletionSource<string?>();
-                        Firebase.Messaging.FirebaseMessaging.Instance
-                            .GetToken()
-                            .AddOnCompleteListener(new TokenListener(tcs));
-
-                        var token = await tcs.Task;
-                        Console.WriteLine($"[FCM] Auto-login token: {token}");
-
-                        if (!string.IsNullOrEmpty(token) && !string.IsNullOrEmpty(firebaseUid))
-                        {
-                            Preferences.Set("fcm_token", token);
-                            await _firestore.PatchFieldsAsync("users", firebaseUid,
-                                new Dictionary<string, object> { { "fcmToken", token } });
-                            Console.WriteLine("[FCM] Token saved on auto-login.");
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"[FCM] Auto-login token error: {ex.Message}");
-                    }
-
                     var context = Android.App.Application.Context;
                     _incomingCallVm!.RegisterIncomingNavigationHandler(AppShell.NavigateAdminToIncomingCallPage);
                     _incomingCallVm!.EnsureInitialized(context);
+
+                    // Don't hold the home page on the FCM token round-trip.
+                    _ = SaveFcmTokenAsync(firebaseUid);
 #endif
                     await Shell.Current.GoToAsync("//AdminTabs/AdminHome");
+                    _ = _firestore.MigrateOwnProfilePhotoAsync(AuthService.LocalId ?? "");
                 }
                 else
                 {
@@ -92,6 +76,7 @@ public partial class App : Application
                     // ─────────────────────────────────────────────────────────────
 
                     await Shell.Current.GoToAsync("//StudentTabs/Home");
+                    _ = _firestore.MigrateOwnProfilePhotoAsync(firebaseUid);
                 }
             }
             else
@@ -100,4 +85,32 @@ public partial class App : Application
             }
         });
     }
+
+#if ANDROID
+    private async Task SaveFcmTokenAsync(string firebaseUid)
+    {
+        try
+        {
+            var tcs = new TaskCompletionSource<string?>();
+            Firebase.Messaging.FirebaseMessaging.Instance
+                .GetToken()
+                .AddOnCompleteListener(new TokenListener(tcs));
+
+            var token = await tcs.Task;
+            Console.WriteLine($"[FCM] Auto-login token: {token}");
+
+            if (!string.IsNullOrEmpty(token) && !string.IsNullOrEmpty(firebaseUid))
+            {
+                Preferences.Set("fcm_token", token);
+                await _firestore.PatchFieldsAsync("users", firebaseUid,
+                    new Dictionary<string, object> { { "fcmToken", token } });
+                Console.WriteLine("[FCM] Token saved on auto-login.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[FCM] Auto-login token error: {ex.Message}");
+        }
+    }
+#endif
 }

@@ -191,24 +191,31 @@ public class IncomingCallViewModel : INotifyPropertyChanged
             return false;
         }
 
-        var token = await _tokenService.GetTokenAsync(_currentCall.ChannelName, 0);
-        if (string.IsNullOrEmpty(token))
-        {
-            StatusText = "Failed to get token. Check server.";
-            await _signal.RejectCallAsync(_currentCall.ChannelName);
-            ResetState();
-            return false;
-        }
+        // Fetch the token and claim the call at the same time — the caller hears
+        // "connected" sooner, and the token server's wake-up time overlaps the DB round-trips.
+        var channel = _currentCall.ChannelName;
+        var tokenTask = _tokenService.GetTokenAsync(channel, 0);
+        var acceptTask = _signal.TryAcceptCallAsync(channel);
+        await Task.WhenAll(tokenTask, acceptTask);
+        var token = tokenTask.Result;
 
-        var accepted = await _signal.TryAcceptCallAsync(_currentCall.ChannelName);
-        if (!accepted)
+        if (!acceptTask.Result)
         {
             StatusText = "Call no longer available";
             ResetState();
             return false;
         }
 
-        _agora.JoinChannel(_currentCall.ChannelName, token);
+        if (string.IsNullOrEmpty(token))
+        {
+            // Already marked accepted, so end it rather than reject it.
+            await _signal.EndCallAsync(channel);
+            ResetState();
+            StatusText = "Failed to get token. Check server.";
+            return false;
+        }
+
+        _agora.JoinChannel(channel, token);
 
         HasIncomingCall = false;
         IsCallActive = true;

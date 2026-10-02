@@ -32,11 +32,12 @@ public partial class AdminStudentProfilePage : ContentPage
 
         try
         {
-            // Try direct document lookup first (fastest)
-            var doc = await _firestore.GetDocumentAsync("users", _studentUid);
+            // Try direct lookup first (fastest) — only the shown fields, not the photo.
+            Dictionary<string, object>? doc = await _firestore.GetFieldsAsync("users", _studentUid,
+                "name", "displayName", "studentNumber", "studentID", "studentId", "email", "uid", "fcmToken");
 
             // Fallback: query by uid field
-            if (doc == null)
+            if (doc.Count == 0)
             {
                 var results = await _firestore.QueryCollectionAsync("users", ("uid", _studentUid));
                 doc = results.Count > 0 ? results[0] : null;

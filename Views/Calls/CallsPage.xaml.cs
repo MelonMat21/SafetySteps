@@ -18,7 +18,7 @@ public partial class CallsPage : ContentPage
     private readonly IncomingCallViewModel _incomingVm;
     private readonly FirestoreService _firestore;
     private readonly ObservableCollection<CallQueueItem> _queueItems = new();
-    private readonly PeriodicTimer _queueTimer = new(TimeSpan.FromSeconds(3));
+    private static readonly TimeSpan QueueRefreshInterval = TimeSpan.FromSeconds(3);
     private CancellationTokenSource? _refreshCts;
 
     public ObservableCollection<CallQueueItem> QueueItems => _queueItems;
@@ -65,9 +65,12 @@ public partial class CallsPage : ContentPage
 
     private async Task StartQueueRefreshLoopAsync(CancellationToken token)
     {
+        // One timer per loop: a PeriodicTimer allows only one waiter, and a quick
+        // disappear/re-appear could otherwise leave two loops sharing it.
+        using var timer = new PeriodicTimer(QueueRefreshInterval);
         try
         {
-            while (await _queueTimer.WaitForNextTickAsync(token))
+            while (await timer.WaitForNextTickAsync(token))
                 await ReloadQueueAsync();
         }
         catch (OperationCanceledException) { }
@@ -90,18 +93,20 @@ public partial class CallsPage : ContentPage
             return;
         }
 
-        // Build items with profile images
-        var newItems = new List<CallQueueItem>();
-        for (int i = 0; i < pending.Count; i++)
-        {
-            var call = pending[i];
-            var item = await CallQueueItem.FromCallAsync(call, i + 1, _firestore);
-            newItems.Add(item);
-        }
-
         // Update on main thread
         MainThread.BeginInvokeOnMainThread(() =>
         {
+            // Same calls in the same order → just tick the wait times instead of
+            // rebuilding every card (and re-decoding every avatar) each refresh.
+            if (pending.Select(c => c.ChannelName).SequenceEqual(_queueItems.Select(q => q.ChannelName)))
+            {
+                foreach (var item in _queueItems)
+                    item.RefreshWaitText();
+                return;
+            }
+
+            var newItems = pending.Select((call, i) => CallQueueItem.FromCall(call, i + 1)).ToList();
+
             _queueItems.Clear();
             foreach (var item in newItems)
                 _queueItems.Add(item);
@@ -177,7 +182,7 @@ public partial class CallsPage : ContentPage
 
 // ── CallQueueItem ─────────────────────────────────────────────────────────────
 
-public class CallQueueItem
+public class CallQueueItem : System.ComponentModel.INotifyPropertyChanged
 {
     public string ChannelName { get; init; } = "";
     public string CallerId { get; init; } = "";
@@ -187,7 +192,29 @@ public class CallQueueItem
     public string StudentNumber { get; init; } = "";
     public string StudentNumberDisplay { get; init; } = "";
     public bool HasStudentNumber { get; init; }
-    public string WaitText { get; init; } = "";
+    public DateTime CreatedAtUtc { get; init; }
+
+    private string _waitText = "";
+    public string WaitText
+    {
+        get => _waitText;
+        private set
+        {
+            if (_waitText == value) return;
+            _waitText = value;
+            PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(nameof(WaitText)));
+        }
+    }
+
+    public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+
+    public void RefreshWaitText()
+    {
+        var wait = DateTime.UtcNow - CreatedAtUtc;
+        WaitText = wait.TotalMinutes >= 1
+            ? $"{(int)wait.TotalMinutes}m waiting"
+            : $"{Math.Max(1, wait.Seconds)}s waiting";
+    }
 
     /// <summary>
     /// The profile image shown in the call card.
@@ -197,17 +224,11 @@ public class CallQueueItem
     public ImageSource ProfileImageSource { get; init; } = "profile2.png";
 
     /// <summary>
-    /// Creates a CallQueueItem, loading the caller's profile image from
-    /// the Realtime Database if available.
+    /// Creates a CallQueueItem from call data that already includes the
+    /// caller's profile image (resolved by CallSignalingService).
     /// </summary>
-    public static Task<CallQueueItem> FromCallAsync(
-        CallData call, int position, FirestoreService firestore)
+    public static CallQueueItem FromCall(CallData call, int position)
     {
-        var wait = DateTime.UtcNow - call.CreatedAtUtc;
-        var waitText = wait.TotalMinutes >= 1
-            ? $"{(int)wait.TotalMinutes}m waiting"
-            : $"{Math.Max(1, wait.Seconds)}s waiting";
-
         bool hasSN = !string.IsNullOrWhiteSpace(call.StudentNumber);
 
         // Format: "Mathew(02000388350)" when student number is available
@@ -234,7 +255,7 @@ public class CallQueueItem
             }
         }
 
-        return Task.FromResult(new CallQueueItem
+        var item = new CallQueueItem
         {
             ChannelName = call.ChannelName,
             CallerId = call.CallerId,
@@ -244,8 +265,10 @@ public class CallQueueItem
             StudentNumber = call.StudentNumber,
             StudentNumberDisplay = "",
             HasStudentNumber = false,   // name already includes SN inline
-            WaitText = waitText,
+            CreatedAtUtc = call.CreatedAtUtc,
             ProfileImageSource = profileSource
-        });
+        };
+        item.RefreshWaitText();
+        return item;
     }
 }

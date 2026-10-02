@@ -344,7 +344,7 @@ public partial class AlertPage : ContentPage
                 { "timestamp",        timestamp },
                 { "status",           "Pending" },
                 { "submittedBy",      currentUid },
-                { "photoBase64",      _photoBase64 ?? "" },
+                // The photo is stored separately (report_photos) so report lists stay small.
             };
 
             bool saved = await _firestore.SetDocumentAsync("emergency_reports", docId, reportData);
@@ -354,6 +354,9 @@ public partial class AlertPage : ContentPage
                     "Failed to send the report. Please check your connection and try again.", "OK");
                 return;
             }
+
+            // Upload the photo while the admin alert is written (below).
+            var photoTask = _firestore.SaveReportPhotoAsync(docId, _photoBase64!);
 
             var alertData = new Dictionary<string, object>
             {
@@ -369,11 +372,17 @@ public partial class AlertPage : ContentPage
                 { "status",          "Unread" },
             };
 
-            bool alertSaved = await _firestore.SetDocumentAsync("admin_alerts", docId, alertData);
-            if (!alertSaved)
-                Console.WriteLine($"[AlertPage] ⚠️ admin_alerts write failed for docId='{docId}'");
+            // Push to admins right away, in the background — the student
+            // shouldn't wait on it to see the confirmation.
+            _ = TrySendAdminFcmAsync(locationDisplay, incidentDisplay, docId, _isHighPriority);
 
-            await TrySendAdminFcmAsync(locationDisplay, incidentDisplay, docId);
+            var alertTask = _firestore.SetDocumentAsync("admin_alerts", docId, alertData);
+            await Task.WhenAll(photoTask, alertTask);
+
+            if (!alertTask.Result)
+                Console.WriteLine($"[AlertPage] ⚠️ admin_alerts write failed for docId='{docId}'");
+            if (!photoTask.Result)
+                Console.WriteLine($"[AlertPage] ⚠️ photo upload failed for docId='{docId}'");
 
             await DisplayAlert("✅ Report Sent",
                 "Your emergency report has been submitted. Help is on the way!", "OK");
@@ -396,7 +405,7 @@ public partial class AlertPage : ContentPage
 
     // ── Admin FCM helper ──────────────────────────────────────
 
-    private async Task TrySendAdminFcmAsync(string locationDisplay, string incidentDisplay, string docId)
+    private async Task TrySendAdminFcmAsync(string locationDisplay, string incidentDisplay, string docId, bool isHighPriority)
     {
         try
         {
@@ -416,7 +425,7 @@ public partial class AlertPage : ContentPage
 
             string notifBody = $"{incidentDisplay} at {locationDisplay}";
 
-            await Task.WhenAll(adminTokens.Select(token => _isHighPriority
+            await Task.WhenAll(adminTokens.Select(token => isHighPriority
                 ? FcmService.SendHighPriorityAlertAsync(token,
                     title: "🚨 HIGH PRIORITY ALERT",
                     body: $"{notifBody} — immediate response needed!",
